@@ -1,0 +1,45 @@
+sequenceDiagram
+    participant C as Candidate
+    participant API as API Gateway
+    participant Auth as Auth Service
+    participant AI as AI Service
+    participant Twenty as Twenty CRM
+    participant DB as Supabase
+    participant Queue as Upstash Redis
+
+    %% Candidate Application Flow
+    C->>API: Submit Application
+    API->>Auth: Verify Token
+    Auth-->>API: Token Valid
+    API->>DB: Create Application
+    API->>Queue: Queue Resume Analysis
+    Queue->>AI: Process Resume
+    AI->>DB: Update Application with Score
+    AI->>Twenty: Create/Update Contact
+    Twenty-->>DB: Sync Contact Data
+    DB-->>API: Return Application Status
+    API-->>C: Application Confirmed
+
+    %% Interview Scheduling Flow
+    C->>API: Request Interview Slot
+    API->>DB: Check Availability
+    DB-->>API: Available Slots
+    C->>API: Confirm Slot
+    API->>Queue: Schedule Interview
+    Queue->>AI: Generate Questions
+    AI->>DB: Store Questions
+    DB-->>API: Interview Details
+    API-->>C: Interview Confirmation
+
+    %% Interview Process Flow
+    C->>API: Join Interview
+    API->>AI: Start Recording
+    AI->>API: Stream Questions
+    API-->>C: Display Questions
+    C->>API: Submit Responses
+    API->>Queue: Queue Analysis
+    Queue->>AI: Analyze Responses
+    AI->>DB: Store Results
+    AI->>Twenty: Update Pipeline
+    DB-->>API: Updated Status
+    API-->>C: Interview Complete
