@@ -1,0 +1,107 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { ApplicationEntity } from '../entities/application.entity';
+import { CandidateEntity } from '../entities/candidate.entity';
+import { JobPostingEntity } from '../entities/job-posting.entity';
+
+@Injectable()
+export class ApplicationService {
+  constructor(
+    @InjectRepository(ApplicationEntity)
+    private applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(CandidateEntity)
+    private candidateRepository: Repository<CandidateEntity>,
+    @InjectRepository(JobPostingEntity)
+    private jobPostingRepository: Repository<JobPostingEntity>,
+  ) {}
+
+  async findAll(): Promise<ApplicationEntity[]> {
+    return this.applicationRepository.find({
+      relations: ['candidate', 'jobPosting'],
+    });
+  }
+
+  async findById(id: string): Promise<ApplicationEntity> {
+    return this.applicationRepository.findOne({
+      where: { id },
+      relations: ['candidate', 'jobPosting'],
+    });
+  }
+
+  async findByCandidateId(candidateId: string): Promise<ApplicationEntity[]> {
+    return this.applicationRepository.find({
+      where: { candidateId },
+      relations: ['jobPosting'],
+    });
+  }
+
+  async findByJobPostingId(jobPostingId: string): Promise<ApplicationEntity[]> {
+    return this.applicationRepository.find({
+      where: { jobPostingId },
+      relations: ['candidate'],
+    });
+  }
+
+  async create(applicationData: Partial<ApplicationEntity>): Promise<ApplicationEntity> {
+    // Calculate match score between candidate and job posting
+    const matchScore = await this.calculateMatchScore(
+      applicationData.candidateId,
+      applicationData.jobPostingId,
+    );
+
+    const application = this.applicationRepository.create({
+      ...applicationData,
+      matchScore,
+      status: applicationData.status || 'pending',
+    });
+
+    return this.applicationRepository.save(application);
+  }
+
+  async update(id: string, applicationData: Partial<ApplicationEntity>): Promise<ApplicationEntity> {
+    await this.applicationRepository.update(id, applicationData);
+    return this.findById(id);
+  }
+
+  async updateStatus(id: string, status: string): Promise<ApplicationEntity> {
+    await this.applicationRepository.update(id, { status });
+    return this.findById(id);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.applicationRepository.delete(id);
+  }
+
+  // Calculate match score between candidate and job posting
+  async calculateMatchScore(candidateId: string, jobPostingId: string): Promise<number> {
+    const candidate = await this.candidateRepository.findOne({ where: { id: candidateId } });
+    const jobPosting = await this.jobPostingRepository.findOne({ where: { id: jobPostingId } });
+
+    if (!candidate || !jobPosting) {
+      return 0;
+    }
+
+    // Calculate match score based on skills
+    const candidateSkills = candidate.skills || [];
+    const requiredSkills = jobPosting.requiredSkills || [];
+
+    if (requiredSkills.length === 0) {
+      return 50; // Default mid-range score if no required skills specified
+    }
+
+    // Count matching skills
+    const matchingSkills = candidateSkills.filter(skill => 
+      requiredSkills.some(reqSkill => 
+        reqSkill.toLowerCase() === skill.toLowerCase()
+      )
+    );
+
+    // Calculate percentage match
+    const matchPercentage = (matchingSkills.length / requiredSkills.length) * 100;
+    
+    // Cap at 100
+    return Math.min(matchPercentage, 100);
+  }
+}

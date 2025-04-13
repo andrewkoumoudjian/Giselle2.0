@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "packages/twenty-server/src/main.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "packages/twenty-server/**/*"
+        ],
+        "maxLambdaSize": "50mb"
+      }
+    },
+    {
+      "src": "packages/twenty-front/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "packages/twenty-front/dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/graphql",
+      "dest": "packages/twenty-server/src/main.ts"
+    },
+    {
+      "src": "/metadata",
+      "dest": "packages/twenty-server/src/main.ts"
+    },
+    {
+      "src": "/rest/(.*)",
+      "dest": "packages/twenty-server/src/main.ts"
+    },
+    {
+      "src": "/healthz",
+      "dest": "packages/twenty-server/src/main.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "packages/twenty-front/dist/$1"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/messaging-message-list-fetch",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/messaging-messages-import",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}
