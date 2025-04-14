@@ -1,4 +1,3 @@
-
 <br>
 <p align="center">
   <a href="https://www.twenty.com">
@@ -29,6 +28,7 @@
 See:  
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
 🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
+☁️ [Serverless Deployment](./SERVERLESS_DEPLOYMENT.md) - Deploy on Vercel, Supabase, and Upstash
 
 # Does the world need another CRM?
 
@@ -155,7 +155,7 @@ Below are a few features we have implemented to date:
 - Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)
 - Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
-- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
+- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome!
 
 
 

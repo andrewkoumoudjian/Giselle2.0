@@ -1,10 +1,15 @@
 import {
-  BullMQDriverFactoryOptions,
-  MessageQueueDriverType,
-  MessageQueueModuleOptions,
+    BullMQDriverFactoryOptions,
+    MessageQueueDriverType,
+    MessageQueueModuleOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+// Add Upstash type to MessageQueueDriverType
+export enum ServerlessDriverType {
+  Upstash = 'upstash',
+}
 
 /**
  * MessageQueue Module factory
@@ -15,37 +20,35 @@ export const messageQueueModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
-  const driverType = MessageQueueDriverType.BullMQ;
+  // Use environment variable to determine if we're running in serverless mode
+  const isServerless = twentyConfigService.get('IS_SERVERLESS') === 'true';
+  const nodeEnv = twentyConfigService.get('NODE_ENV');
 
-  switch (driverType) {
-    /* 
-    case MessageQueueDriverType.Sync: {
-      return {
-        type: MessageQueueDriverType.Sync,
-        options: {},
-      } satisfies SyncDriverFactoryOptions;
-    }
-    case MessageQueueDriverType.PgBoss: {
-      const connectionString = twentyConfigService.get('PG_DATABASE_URL');
+  // For Vercel deployment, use Upstash driver
+  if (isServerless) {
+    const upstashUrl = twentyConfigService.get('UPSTASH_REDIS_URL');
+    const upstashToken = twentyConfigService.get('UPSTASH_REDIS_TOKEN');
 
-      return {
-        type: MessageQueueDriverType.PgBoss,
-        options: {
-          connectionString,
-        },
-      } satisfies PgBossDriverFactoryOptions;
-    }*/
-    case MessageQueueDriverType.BullMQ: {
-      return {
-        type: MessageQueueDriverType.BullMQ,
-        options: {
-          connection: redisClientService.getClient(),
-        },
-      } satisfies BullMQDriverFactoryOptions;
-    }
-    default:
+    if (!upstashUrl || !upstashToken) {
       throw new Error(
-        `Invalid message queue driver type (${driverType}), check your .env file`,
+        `Serverless message queue requires UPSTASH_REDIS_URL and UPSTASH_REDIS_TOKEN environment variables`,
       );
+    }
+
+    return {
+      type: ServerlessDriverType.Upstash as any,
+      options: {
+        url: upstashUrl,
+        token: upstashToken,
+      },
+    };
   }
+
+  // For development/testing or traditional deployment, use BullMQ
+  return {
+    type: MessageQueueDriverType.BullMQ,
+    options: {
+      connection: redisClientService.getClient(),
+    },
+  } satisfies BullMQDriverFactoryOptions;
 };

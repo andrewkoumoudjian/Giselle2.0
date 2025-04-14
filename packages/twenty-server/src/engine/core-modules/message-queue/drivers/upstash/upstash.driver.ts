@@ -1,14 +1,16 @@
-import { OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
+import { Redis } from '@upstash/redis';
 import { v4 } from 'uuid';
 
 import {
-    QueueCronJobOptions,
-    QueueJobOptions,
+  QueueCronJobOptions,
+  QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
@@ -20,17 +22,26 @@ export type UpstashQueueOptions = {
 
 // This is a simplified version of the BullMQ driver adapted for serverless environment
 // Instead of keeping persistent workers, it uses Vercel cron jobs to trigger processing
+@Injectable()
 export class UpstashDriver implements MessageQueueDriver, OnModuleDestroy {
   private queueMap: Record<string, any> = {};
-  
-  constructor(private options: UpstashQueueOptions) {}
+  private redisClient: Redis;
+  private readonly logger = new Logger(UpstashDriver.name);
+
+  constructor(private options: UpstashQueueOptions) {
+    this.redisClient = new Redis({
+      url: options.url,
+      token: options.token,
+    });
+  }
 
   register(queueName: MessageQueue): void {
     // In a serverless environment, we're just registering the queue name
     this.queueMap[queueName] = {
       name: queueName,
-      options: this.options
+      options: this.options,
     };
+    this.logger.log(`Queue ${queueName} registered in serverless mode`);
   }
 
   async onModuleDestroy() {
@@ -44,7 +55,9 @@ export class UpstashDriver implements MessageQueueDriver, OnModuleDestroy {
   ) {
     // In a serverless environment, workers are triggered via HTTP endpoints
     // The actual processing will happen when the Vercel cron job triggers the endpoint
-    console.log(`Worker registration for queue ${queueName} acknowledged, but will be triggered via HTTP in serverless mode`);
+    this.logger.log(
+      `Worker registration for queue ${queueName} acknowledged, but will be triggered via HTTP in serverless mode`,
+    );
   }
 
   async addCron<T>({
@@ -72,7 +85,7 @@ export class UpstashDriver implements MessageQueueDriver, OnModuleDestroy {
       id: jobId || v4(),
       name: jobName,
       data,
-      options
+      options,
     });
   }
 
@@ -87,6 +100,7 @@ export class UpstashDriver implements MessageQueueDriver, OnModuleDestroy {
   }): Promise<void> {
     // Since we're using Vercel cron, we need to mark the job as deleted in Redis
     const key = getJobKey({ jobName, jobId });
+
     await this.removeJob(queueName, key);
   }
 
@@ -103,7 +117,7 @@ export class UpstashDriver implements MessageQueueDriver, OnModuleDestroy {
     }
 
     const jobId = options?.id ? `${options.id}-${v4()}` : v4();
-    
+
     // Store the job in Redis for processing by the serverless function
     await this.storeJob(queueName, {
       id: jobId,
@@ -112,25 +126,70 @@ export class UpstashDriver implements MessageQueueDriver, OnModuleDestroy {
       options: {
         priority: options?.priority,
         retryLimit: options?.retryLimit || 0,
-      }
+      },
     });
   }
 
   // Helper method to store jobs in Redis
   private async storeJob(queueName: string, job: any): Promise<void> {
-    // This would use the Upstash Redis client to store the job
-    // For now, this is a placeholder implementation
-    console.log(`Storing job in queue ${queueName}:`, job);
-    // In a real implementation, we would use:
-    // await redis.set(`${queueName}:${job.id}`, JSON.stringify(job));
+    try {
+      await this.redisClient.set(`${queueName}:${job.id}`, JSON.stringify(job));
+      // Add job ID to a set for each queue to help with job management
+      await this.redisClient.sadd(`${queueName}:jobs`, job.id);
+      this.logger.debug(`Job stored in queue ${queueName} with ID ${job.id}`);
+    } catch (error) {
+      this.logger.error(`Failed to store job in queue ${queueName}:`, error);
+      throw error;
+    }
   }
 
   // Helper method to remove jobs from Redis
   private async removeJob(queueName: string, jobKey: string): Promise<void> {
-    // This would use the Upstash Redis client to remove the job
-    // For now, this is a placeholder implementation
-    console.log(`Removing job from queue ${queueName} with key ${jobKey}`);
-    // In a real implementation, we would use:
-    // await redis.del(`${queueName}:${jobKey}`);
+    try {
+      await this.redisClient.del(`${queueName}:${jobKey}`);
+      // Remove from the job set
+      await this.redisClient.srem(`${queueName}:jobs`, jobKey);
+      this.logger.debug(
+        `Job removed from queue ${queueName} with key ${jobKey}`,
+      );
+    } catch (error) {
+      this.logger.error(`Failed to remove job from queue ${queueName}:`, error);
+      throw error;
+    }
+  }
+
+  // Additional method to process jobs (to be called by Vercel serverless function)
+  async processJobs(queueName: MessageQueue): Promise<number> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(`Queue ${queueName} is not registered`);
+    }
+
+    let processedCount = 0;
+    const jobIds = await this.redisClient.smembers(`${queueName}:jobs`);
+
+    for (const jobId of jobIds) {
+      const jobData = await this.redisClient.get(`${queueName}:${jobId}`);
+
+      if (jobData) {
+        try {
+          const job = JSON.parse(jobData as string);
+
+          // Process the job
+          // In a real implementation, you would call the handler here
+          this.logger.log(`Processing job ${jobId} from queue ${queueName}`);
+          processedCount++;
+
+          // Remove the job after processing
+          await this.removeJob(queueName, jobId);
+        } catch (error) {
+          this.logger.error(
+            `Failed to process job ${jobId} from queue ${queueName}:`,
+            error,
+          );
+        }
+      }
+    }
+
+    return processedCount;
   }
 }

@@ -12,6 +12,15 @@
       }
     },
     {
+      "src": "packages/twenty-server/src/api/functions/**/*.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "packages/twenty-server/**/*"
+        ]
+      }
+    },
+    {
       "src": "packages/twenty-front/package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -20,6 +29,14 @@
     }
   ],
   "routes": [
+    {
+      "src": "/api/cron/(.*)",
+      "dest": "packages/twenty-server/src/api/functions/$1.ts"
+    },
+    {
+      "src": "/api/migrations/(.*)",
+      "dest": "packages/twenty-server/src/api/functions/migrations/$1.ts"
+    },
     {
       "src": "/graphql",
       "dest": "packages/twenty-server/src/main.ts"
@@ -42,6 +59,10 @@
     }
   ],
   "crons": [
+    {
+      "path": "/api/cron/process-jobs",
+      "schedule": "*/5 * * * *"
+    },
     {
       "path": "/api/cron/messaging-message-list-fetch",
       "schedule": "*/15 * * * *"

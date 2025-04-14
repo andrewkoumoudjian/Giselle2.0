@@ -1,28 +1,30 @@
 import {
-  DynamicModule,
-  Global,
-  Logger,
-  Module,
-  Provider,
+    DynamicModule,
+    Global,
+    Logger,
+    Module,
+    Provider,
 } from '@nestjs/common';
 
 import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
+import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
+import { PgBossDriver } from 'src/engine/core-modules/message-queue/drivers/pg-boss.driver';
+import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
+import { UpstashDriver } from 'src/engine/core-modules/message-queue/drivers/upstash/upstash.driver';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import {
-  MessageQueue,
-  QUEUE_DRIVER,
+    MessageQueue,
+    QUEUE_DRIVER,
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { PgBossDriver } from 'src/engine/core-modules/message-queue/drivers/pg-boss.driver';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
-import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import {
-  ASYNC_OPTIONS_TYPE,
-  ConfigurableModuleClass,
-  OPTIONS_TYPE,
+    ASYNC_OPTIONS_TYPE,
+    ConfigurableModuleClass,
+    OPTIONS_TYPE,
 } from 'src/engine/core-modules/message-queue/message-queue.module-definition';
+import { ServerlessDriverType } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
 @Global()
 @Module({})
@@ -101,6 +103,11 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       }
       case MessageQueueDriverType.Sync: {
         return new SyncDriver();
+      }
+      case ServerlessDriverType.Upstash: {
+        this.logger.log('Using Upstash driver for serverless environment');
+
+        return new UpstashDriver(options);
       }
       default: {
         this.logger.warn(
