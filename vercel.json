@@ -39,6 +39,5 @@
   "env": {
     "IS_SERVERLESS": "true",
     "SQLITE_DISABLED": "true"
-  },
-  "rootDirectory": "packages/twenty-front"
+  }
 }
