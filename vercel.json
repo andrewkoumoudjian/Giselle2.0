@@ -2,47 +2,29 @@
   "version": 2,
   "builds": [
     {
+      "src": "packages/twenty-front/package.json",
+      "use": "@vercel/node",
+      "config": {
+        "buildCommand": "cd ../.. && yarn && cd packages/twenty-front && yarn build",
+        "outputDirectory": "dist"
+      }
+    },
+    {
       "src": "packages/twenty-server/src/main.ts",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": [
-          "packages/twenty-server/**/*"
-        ],
-        "maxLambdaSize": "50mb"
-      }
-    },
-    {
-      "src": "packages/twenty-server/src/api/functions/**/*.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "packages/twenty-server/**/*"
-        ]
-      }
-    },
-    {
-      "src": "packages/twenty-front/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "packages/twenty-front/dist"
+        "buildCommand": "cd ../.. && yarn && cd packages/twenty-server && yarn build",
+        "installCommand": "yarn install"
       }
     }
   ],
   "routes": [
     {
-      "src": "/api/cron/(.*)",
-      "dest": "packages/twenty-server/src/api/functions/$1.ts"
-    },
-    {
-      "src": "/api/migrations/(.*)",
-      "dest": "packages/twenty-server/src/api/functions/migrations/$1.ts"
-    },
-    {
-      "src": "/graphql",
+      "src": "/api/(.*)",
       "dest": "packages/twenty-server/src/main.ts"
     },
     {
-      "src": "/metadata",
+      "src": "/graphql",
       "dest": "packages/twenty-server/src/main.ts"
     },
     {
@@ -50,26 +32,12 @@
       "dest": "packages/twenty-server/src/main.ts"
     },
     {
-      "src": "/healthz",
-      "dest": "packages/twenty-server/src/main.ts"
-    },
-    {
       "src": "/(.*)",
-      "dest": "packages/twenty-front/dist/$1"
+      "dest": "packages/twenty-front/dist/index.html"
     }
   ],
-  "crons": [
-    {
-      "path": "/api/cron/process-jobs",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/messaging-message-list-fetch",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/messaging-messages-import",
-      "schedule": "*/15 * * * *"
-    }
-  ]
+  "env": {
+    "IS_SERVERLESS": "true",
+    "SQLITE_DISABLED": "true"
+  }
 }
