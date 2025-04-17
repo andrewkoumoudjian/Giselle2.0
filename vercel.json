@@ -2,10 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "packages/twenty-front/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "packages/twenty-front/dist"
+        "distDir": "packages/twenty-front/dist",
+        "buildCommand": "yarn build"
       }
     },
     {

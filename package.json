@@ -1,5 +1,8 @@
 {
   "private": true,
+  "scripts": {
+    "build": "yarn workspace twenty-shared build && yarn workspace twenty-front build"
+  },
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
