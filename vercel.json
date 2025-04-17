@@ -3,33 +3,20 @@
   "builds": [
     {
       "src": "packages/twenty-front/package.json",
-      "use": "@vercel/node",
+      "use": "@vercel/static-build",
       "config": {
-        "buildCommand": "cd ../.. && yarn && cd packages/twenty-front && yarn build",
-        "outputDirectory": "dist"
+        "distDir": "packages/twenty-front/dist"
       }
     },
     {
-      "src": "packages/twenty-server/src/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "buildCommand": "cd ../.. && yarn && cd packages/twenty-server && yarn build",
-        "installCommand": "yarn install"
-      }
+      "src": "packages/twenty-server/api/**/*.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "packages/twenty-server/src/main.ts"
-    },
-    {
-      "src": "/graphql",
-      "dest": "packages/twenty-server/src/main.ts"
-    },
-    {
-      "src": "/rest/(.*)",
-      "dest": "packages/twenty-server/src/main.ts"
+      "dest": "packages/twenty-server/api/$1.ts"
     },
     {
       "src": "/(.*)",
@@ -38,6 +25,10 @@
   ],
   "env": {
     "IS_SERVERLESS": "true",
-    "SQLITE_DISABLED": "true"
+    "SQLITE_DISABLED": "true",
+    "DATABASE_URL": "@DATABASE_URL",
+    "POSTGRES_URL": "@POSTGRES_URL",
+    "REDIS_URL": "@REDIS_URL",
+    "JWT_SECRET": "@JWT_SECRET"
   }
 }
