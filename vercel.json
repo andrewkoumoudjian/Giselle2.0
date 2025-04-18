@@ -5,8 +5,8 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "packages/twenty-front/dist",
-        "buildCommand": "yarn build"
+        "distDir": "packages/twenty-front/build",
+        "buildCommand": "npx nx build twenty-shared && npx nx build twenty-front"
       }
     },
     {
@@ -21,7 +21,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "packages/twenty-front/dist/index.html"
+      "dest": "packages/twenty-front/build/index.html"
     }
   ],
   "env": {
