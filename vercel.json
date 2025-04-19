@@ -27,8 +27,8 @@
   "env": {
     "IS_SERVERLESS": "true",
     "SQLITE_DISABLED": "true",
-    "PG_DATABASE_URL": "@POSTGRES_URL",
-    "POSTGRES_URL": "@POSTGRES_URL",
+    "PG_DATABASE_URL": "${POSTGRES_URL}",
+    "POSTGRES_URL": "${POSTGRES_URL}",
     "REDIS_URL": "@REDIS_URL",
     "JWT_SECRET": "@JWT_SECRET"
   }
