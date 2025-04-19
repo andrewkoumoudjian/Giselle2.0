@@ -1,5 +1,28 @@
 {
-  "buildCommand": "VERCEL_FORCE_NO_BUILD_CACHE=1 NODE_OPTIONS='--max-old-space-size=8192' npm run build",
+  "buildCommand": "NODE_OPTIONS=\"--max-old-space-size=6144\" VERCEL_FORCE_NO_BUILD_CACHE=1 npm run build",
   "outputDirectory": "packages/twenty-front/dist",
-  "framework": "vite"
+  "env": {
+    "VITE_DISABLE_TYPESCRIPT_CHECKER": "true",
+    "VITE_DISABLE_ESLINT_CHECKER": "true",
+    "TURBO_TELEMETRY_DISABLED": "1"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
 }
