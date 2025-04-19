@@ -9,6 +9,9 @@ export class CandidateEntity {
   @Column({ nullable: true })
   userId: string;
 
+  @Column({ nullable: true })
+  personId: string;
+
   @Column('text', { array: true, nullable: true })
   skills: string[];
 

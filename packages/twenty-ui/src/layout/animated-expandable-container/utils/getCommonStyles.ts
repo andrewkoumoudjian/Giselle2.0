@@ -1,5 +1,5 @@
-import { AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
-import { getTransitionValues } from '@ui/layout/animated-expandable-container/utils/getTransitionValues';
+import { AnimationDimension } from '../types/AnimationDimension';
+import { getTransitionValues } from './getTransitionValues';
 
 export const getCommonStyles = (
   dimension: AnimationDimension,

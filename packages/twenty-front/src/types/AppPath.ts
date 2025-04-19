@@ -15,6 +15,7 @@ export enum AppPath {
   HrLanding = '/hr',
   HrDashboard = '/hr/dashboard',
   CandidateMatching = '/hr/candidates',
+  CandidateDashboard = '/hr/candidate-dashboard',
   JobPostings = '/hr/jobs',
   Interviews = '/hr/interviews',
   CandidatePortal = '/hr/portal',

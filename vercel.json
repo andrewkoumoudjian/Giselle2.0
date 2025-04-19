@@ -1,5 +1,21 @@
 {
   "version": 2,
+  "buildCommand": "yarn build",
+  "outputDirectory": "packages/twenty-front/dist",
+  "installCommand": "yarn install",
+  "framework": "vite",
+  "devCommand": "yarn dev",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
   "builds": [
     {
       "src": "package.json",

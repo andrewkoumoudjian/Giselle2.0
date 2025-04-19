@@ -15,6 +15,12 @@ const HrDashboard = lazy(() =>
 const CandidateMatchingDashboard = lazy(() => 
   import('@/modules/hr/pages/CandidateMatchingDashboard').then(module => ({ default: module.CandidateMatchingDashboard }))
 );
+const CandidateDashboard = lazy(() => 
+  import('@/modules/hr/components/CandidateDashboard').then(module => ({ default: module.CandidateDashboard }))
+);
+const HrIntegrationPage = lazy(() => 
+  import('@/modules/hr/pages/HrIntegrationPage').then(module => ({ default: module.HrIntegrationPage }))
+);
 const LandingPage = lazy(() => 
   import('@/modules/hr/pages/LandingPage').then(module => ({ default: module.LandingPage }))
 );
@@ -26,6 +32,12 @@ const ResetPasswordEffect = lazy(() => import('@/modules/auth/pages/ResetPasswor
 const SignUpEffect = lazy(() => import('@/modules/auth/pages/SignUpEffect'));
 const SignInEffect = lazy(() => import('@/modules/auth/pages/SignInEffect'));
 const UnsubscribeEffect = lazy(() => import('@/modules/auth/pages/UnsubscribeEffect'));
+
+// Auth-required wrapper component
+const RequireAuth = ({ children }) => {
+  // In a real app, we would check authentication here
+  return children;
+};
 
 export const RouterProvider = ({ children }: ComponentWithChildren) => {
   return (
@@ -43,27 +55,21 @@ export const RouterProvider = ({ children }: ComponentWithChildren) => {
       {/* HR Landing Page - Public route */}
       <Route path={AppPath.HrLanding} element={<LandingPage />} />
       
-      {/* Protected HR Routes */}
+      {/* HR Module with nested routes */}
       <Route
-        path={AppPath.HrDashboard + '/*'}
+        path="/hr/*"
         element={
           <RequireAuth>
             <DefaultLayout>
-              <HrDashboard />
+              <HrIntegrationPage />
             </DefaultLayout>
           </RequireAuth>
         }
-      />
-      <Route
-        path={AppPath.CandidateMatching + '/*'}
-        element={
-          <RequireAuth>
-            <DefaultLayout>
-              <CandidateMatchingDashboard />
-            </DefaultLayout>
-          </RequireAuth>
-        }
-      />
+      >
+        <Route path="dashboard" element={<HrDashboard />} />
+        <Route path="candidates" element={<CandidateMatchingDashboard />} />
+        <Route path="candidate-dashboard" element={<CandidateDashboard />} />
+      </Route>
       
       {/* Other routes */}
       <Route path={AppPath.Settings + '/*'} element={<SettingsLayout />} />

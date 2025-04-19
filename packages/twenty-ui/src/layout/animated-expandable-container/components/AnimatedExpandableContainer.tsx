@@ -1,14 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
-import { AnimationDurationObject } from '@ui/layout/animated-expandable-container/types/AnimationDurationObject';
-import { AnimationDurations } from '@ui/layout/animated-expandable-container/types/AnimationDurations';
-import { AnimationMode } from '@ui/layout/animated-expandable-container/types/AnimationMode';
-import { AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
-import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-container/utils/getExpandableAnimationConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactNode, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
+import { AnimationDimension } from '../types/AnimationDimension';
+import { AnimationDurationObject } from '../types/AnimationDurationObject';
+import { AnimationDurations } from '../types/AnimationDurations';
+import { AnimationMode } from '../types/AnimationMode';
+import { AnimationSize } from '../types/AnimationSize';
+import { getExpandableAnimationConfig } from '../utils/getExpandableAnimationConfig';
 
 const StyledMotionContainer = styled(motion.div)<{
   containAnimation: boolean;

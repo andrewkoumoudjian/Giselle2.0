@@ -1,13 +1,11 @@
 /* eslint-disable no-console */
 import { lingui } from '@lingui/vite-plugin';
-import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
-import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -16,57 +14,54 @@ type Checkers = Parameters<typeof checker>[0];
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
-  const {
-    REACT_APP_SERVER_BASE_URL,
-    VITE_BUILD_SOURCEMAP,
-    VITE_DISABLE_TYPESCRIPT_CHECKER,
-    VITE_DISABLE_ESLINT_CHECKER,
-    VITE_HOST,
-    SSL_CERT_PATH,
-    SSL_KEY_PATH,
-    REACT_APP_PORT,
-  } = env;
+  const isBuild = command === 'build';
+  const isCoverage = mode === 'coverage';
+  const isCI = Boolean(env.CI);
+  const isVitestUI = Boolean(env.VITEST_UI);
 
-  const port = isNonEmptyString(REACT_APP_PORT)
-    ? parseInt(REACT_APP_PORT)
-    : 3001;
+  const port = env.PORT ? parseInt(env.PORT, 10) : 3000;
+  const VITE_HOST = env.VITE_HOST;
+  const SSL_KEY_PATH = env.SSL_KEY_PATH;
+  const SSL_CERT_PATH = env.SSL_CERT_PATH;
 
-  const isBuildCommand = command === 'build';
+  const checkers: Checkers = {};
 
-  const tsConfigPath = isBuildCommand
-    ? path.resolve(__dirname, './tsconfig.build.json')
-    : path.resolve(__dirname, './tsconfig.dev.json');
-
-  const checkers: Checkers = {
-    overlay: false,
-  };
-
-  if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
-    console.log(
-      `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
-    );
-  }
-
-  if (VITE_DISABLE_ESLINT_CHECKER === 'true') {
-    console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
-  }
-
-  if (VITE_BUILD_SOURCEMAP === 'true') {
-    console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
-  }
-
-  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
-    checkers['typescript'] = {
-      tsconfigPath: tsConfigPath,
+  if (!isBuild && !env.VITE_DISABLE_ESLINT_CHECKER) {
+    console.log('Enabling ESLint checker in dev mode');
+    checkers.eslint = {
+      lintCommand: `${isCoverage ? '' : 'TIMING=1 '}eslint --ext ts,tsx "src/**/*{ts,tsx}"`,
+      dev: {
+        logLevel: ['warning', 'error'],
+      },
     };
   }
 
-  if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
-    checkers['eslint'] = {
-      lintCommand:
-        // Appended to packages/twenty-front/.eslintrc.cjs
-        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+  if (!isBuild && !env.VITE_DISABLE_TYPESCRIPT_CHECKER) {
+    console.log('Enabling TypeScript checker in dev mode');
+    checkers.typescript = {
+      root: '../../',
+      tsconfigPath: `${__dirname}/tsconfig.json`,
+      buildMode: false,
     };
+  }
+
+  const plugins = [
+    react({
+      jsxImportSource: '@emotion/react',
+      plugins: [['@lingui/swc-plugin', {}]],
+    }),
+    tsconfigPaths({
+      projects: ['tsconfig.json'],
+    }),
+    svgr(),
+    lingui({
+      configPath: path.resolve(__dirname, './lingui.config.ts'),
+    }),
+    checker(checkers),
+  ];
+
+  if (!isBuild) {
+    plugins.push(wyw());
   }
 
   return {
@@ -95,132 +90,87 @@ export default defineConfig(({ command, mode }) => {
       },
     },
 
-    plugins: [
-      externalizeDeps({
-        deps: ['twenty-shared', 'twenty-ui'],
-        include: [/^twenty-shared\/.*/, /^twenty-ui\/.*/],
-      }),
-      react({
-        jsxImportSource: '@emotion/react',
-        plugins: [['@lingui/swc-plugin', {}]],
-      }),
-      tsconfigPaths({
-        projects: ['tsconfig.json'],
-      }),
-      svgr(),
-      lingui({
-        configPath: path.resolve(__dirname, './lingui.config.ts'),
-      }),
-      checker(checkers),
-      // TODO: fix this, we have to restrict the include to only the components that are using linaria
-      // Otherwise the build will fail because wyw tries to include emotion styled components
-      wyw({
-        include: [
-          '**/CurrencyDisplay.tsx',
-          '**/EllipsisDisplay.tsx',
-          '**/ContactLink.tsx',
-          '**/BooleanDisplay.tsx',
-          '**/LinksDisplay.tsx',
-          '**/RoundedLink.tsx',
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Chip.tsx',
-          '**/Tag.tsx',
-          '**/MultiSelectFieldDisplay.tsx',
-          '**/RatingInput.tsx',
-          '**/RecordTableCellContainer.tsx',
-          '**/RecordTableCellDisplayContainer.tsx',
-          '**/Avatar.tsx',
-          '**/RecordTableBodyDroppable.tsx',
-          '**/RecordTableCellBaseContainer.tsx',
-          '**/RecordTableCellTd.tsx',
-          '**/RecordTableTd.tsx',
-          '**/RecordTableHeaderDragDropColumn.tsx',
-          '**/ActorDisplay.tsx',
-          '**/AvatarChip.tsx',
-          '**/URLDisplay.tsx',
-          '**/EmailsDisplay.tsx',
-          '**/PhonesDisplay.tsx',
-          '**/MultiSelectDisplay.tsx',
-          
-        ],
-        babelOptions: {
-          presets: ['@babel/preset-typescript', '@babel/preset-react'],
-        },
-      }),
-    ],
+    plugins,
 
-    optimizeDeps: {
-      exclude: [
-        '../../node_modules/.vite',
-        '../../node_modules/.cache',
-        '../../node_modules/twenty-ui',
-      ],
-      include: [
-        'twenty-ui',
-        'twenty-ui/display',
-        'twenty-ui/components',
-        'twenty-ui/input',
-        'twenty-ui/navigation',
-        'twenty-ui/utilities',
-        'twenty-ui/theme',
-        'twenty-shared',
-        'twenty-shared/translations',
-        'twenty-shared/constants',
-        'twenty-shared/testing',
-        'twenty-shared/types',
-        'twenty-shared/utils',
-        'twenty-shared/workspace'
-      ]
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      console: true,
+      updateSnapshot: isCI,
+      coverage: isCoverage
+        ? {
+            provider: 'istanbul',
+            exclude: [
+              'node_modules/**',
+              'src/generated/**',
+              'src/**/*.spec.{ts,tsx}',
+              'src/**/*.stories.tsx',
+              'src/__tests__/**',
+              'src/__mocks__/**',
+            ],
+            reporter: [isVitestUI ? 'text' : 'json', 'lcov'],
+          }
+        : undefined,
+      passWithNoTests: true,
+      setupFiles: ['./setupTests.ts'],
+      ...(isCI
+        ? {
+            maxWorkers: 1,
+            minWorkers: 1,
+          }
+        : {
+            minWorkers: 1,
+          }),
+      onConsoleLog(log: string) {
+        if (
+          log.includes('[MobX]') ||
+          log.includes('react-virtuoso') ||
+          log.includes("[react-virtuoso] can't measure the") ||
+          log.includes('ag-grid') ||
+          log.includes('Duplicate atom key')
+        ) {
+          return false;
+        }
+      },
     },
 
     build: {
-      minify: false,
-      outDir: 'build',
-      sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      outDir: 'dist',
+      emptyOutDir: true,
+      sourcemap: true,
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+        },
         output: {
           manualChunks: (id) => {
-            if (id.includes('@scalar')) {
-              return 'scalar';
+            if (
+              id.includes('apollo') ||
+              id.includes('lingui') ||
+              id.includes('lodash') ||
+              id.includes('react-dom') ||
+              id.includes('react-hook-form') ||
+              id.includes('react-router') ||
+              id.includes('slate') ||
+              id.includes('tiptap') ||
+              id.includes('rxjs') ||
+              id.includes('@blocknote/') ||
+              id.includes('twenty-shared/') ||
+              id.includes('twenty-ui/')
+            ) {
+              const name = id.split('/').find((segment) => segment.includes('@')) || id;
+              const packageName = name.includes('twenty-') ? name : name.split('/')[0];
+              return 'vendor_' + packageName;
             }
-
-            return null;
           },
         },
-        external: [
-          'twenty-ui/style.css',
-          'twenty-ui/display',
-          'twenty-ui/components',
-          'twenty-ui/input',
-          'twenty-ui/navigation',
-          'twenty-ui/utilities',
-          'twenty-ui/theme',
-          'twenty-shared',
-          'twenty-shared/translations',
-          'twenty-shared/constants',
-          'twenty-shared/testing',
-          'twenty-shared/types',
-          'twenty-shared/utils',
-          'twenty-shared/workspace'
-        ]
       },
     },
 
-    envPrefix: 'REACT_APP_',
+    optimizeDeps: {
+      exclude: ['twenty-shared', 'twenty-ui'],
+    },
 
-    define: {
-      _env_: {
-        REACT_APP_SERVER_BASE_URL,
-      },
-      'process.env': {
-        REACT_APP_SERVER_BASE_URL,
-      },
-    },
-    css: {
-      modules: {
-        localsConvention: 'camelCaseOnly',
-      },
-    },
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',

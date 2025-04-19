@@ -1,7 +1,7 @@
-import { AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
-import { AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
-import { getCommonStyles } from '@ui/layout/animated-expandable-container/utils/getCommonStyles';
-import { getTransitionValues } from '@ui/layout/animated-expandable-container/utils/getTransitionValues';
+import { AnimationDimension } from '../types/AnimationDimension';
+import { AnimationSize } from '../types/AnimationSize';
+import { getCommonStyles } from './getCommonStyles';
+import { getTransitionValues } from './getTransitionValues';
 
 export const getExpandableAnimationConfig = (
   isExpanded: boolean,
