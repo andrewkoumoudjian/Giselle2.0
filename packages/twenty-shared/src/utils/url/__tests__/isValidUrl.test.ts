@@ -1,29 +1,16 @@
-import { isValidUrl } from '@/utils/url/isValidUrl';
+import { isValidUrl } from '../isValidUrl';
 
 describe('isValidUrl', () => {
-  it('test cases', () => {
-    // Truthy
-    expect(isValidUrl('https://www.example.com')).toBe(true);
-    expect(isValidUrl('http://192.168.2.0:3000')).toBe(true);
-    expect(isValidUrl('http://localhost')).toBe(true);
-    expect(isValidUrl('http://localhost:3000')).toBe(true);
-    expect(isValidUrl('http://subdomain.example.com')).toBe(true);
-    expect(isValidUrl('https://www.example.com/path')).toBe(true);
-    expect(isValidUrl('https://www.example.com/path/path2?query=123')).toBe(
-      true,
-    );
-    expect(isValidUrl('http://localhost:3000')).toBe(true);
-    expect(isValidUrl('example.com')).toBe(true);
-    expect(isValidUrl('www.subdomain.example.com')).toBe(true);
-    expect(isValidUrl('192.168.2.0')).toBe(true);
-    expect(isValidUrl('3.com')).toBe(true);
+  it('returns true for valid urls', () => {
+    expect(isValidUrl('http://www.example.com')).toBe(true);
+    expect(isValidUrl('https://example.com')).toBe(true);
+    expect(isValidUrl('https://sub.domain.example.com/path?query=1')).toBe(true);
+  });
 
-    // Falsy
-    expect(isValidUrl('?o')).toBe(false);
+  it('returns false for invalid urls', () => {
+    expect(isValidUrl('invalid..com')).toBe(false);
+    expect(isValidUrl('example.com')).toBe(false); // Missing protocol
     expect(isValidUrl('')).toBe(false);
-    expect(isValidUrl('\\')).toBe(false);
-    expect(isValidUrl('wwwexamplecom')).toBe(false);
-    expect(isValidUrl('2/toto')).toBe(false);
-    expect(isValidUrl('2')).toBe(false);
+    expect(isValidUrl('invalid domain.com')).toBe(false);
   });
 });

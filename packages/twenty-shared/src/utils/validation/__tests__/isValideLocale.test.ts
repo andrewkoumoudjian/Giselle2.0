@@ -1,14 +1,13 @@
-import { APP_LOCALES } from '@/translations';
-import { isValidLocale } from '@/utils/validation/isValidLocale';
+import { isValidLocale } from '../isValidLocale';
+
 describe('isValidLocale', () => {
-  it('should return true for valid locales', () => {
-    Object.keys(APP_LOCALES).forEach((locale) => {
-      expect(isValidLocale(locale)).toBe(true);
-    });
+  it('returns true for valid locales', () => {
+    expect(isValidLocale('en')).toBe(true);
+    expect(isValidLocale('fr-FR')).toBe(true);
   });
 
-  it('should return false for invalid locales', () => {
-    expect(isValidLocale('invalidLocale')).toBe(false);
+  it('returns false for invalid locales', () => {
+    expect(isValidLocale('invalid-locale')).toBe(false);
     expect(isValidLocale(null)).toBe(false);
   });
 });

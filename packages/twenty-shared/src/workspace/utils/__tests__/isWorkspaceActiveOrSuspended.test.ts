@@ -1,52 +1,43 @@
-import { WorkspaceActivationStatus } from '@/workspace/types/WorkspaceActivationStatus';
-import { isWorkspaceActiveOrSuspended } from '@/workspace/utils/isWorkspaceActiveOrSuspended';
+import { WorkspaceActivationStatus } from '../../types/WorkspaceActivationStatus';
+import { isWorkspaceActiveOrSuspended } from '../isWorkspaceActiveOrSuspended';
 
 describe('isWorkspaceActiveOrSuspended', () => {
-  it('should return true for Active workspace', () => {
-    const workspace = {
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    };
-
-    expect(isWorkspaceActiveOrSuspended(workspace)).toBe(true);
+  it('returns true for active workspaces', () => {
+    expect(
+      isWorkspaceActiveOrSuspended({
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      })
+    ).toBe(true);
   });
 
-  it('should return true for Suspended workspace', () => {
-    const workspace = {
-      activationStatus: WorkspaceActivationStatus.SUSPENDED,
-    };
-
-    expect(isWorkspaceActiveOrSuspended(workspace)).toBe(true);
+  it('returns true for suspended workspaces', () => {
+    expect(
+      isWorkspaceActiveOrSuspended({
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+      })
+    ).toBe(true);
   });
 
-  it('should return false for Inactive workspace', () => {
-    const workspace = {
-      activationStatus: WorkspaceActivationStatus.INACTIVE,
-    };
-
-    expect(isWorkspaceActiveOrSuspended(workspace)).toBe(false);
+  it('returns false for other workspace statuses', () => {
+    expect(
+      isWorkspaceActiveOrSuspended({
+        activationStatus: WorkspaceActivationStatus.INACTIVE,
+      })
+    ).toBe(false);
+    expect(
+      isWorkspaceActiveOrSuspended({
+        activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+      })
+    ).toBe(false);
+    expect(
+      isWorkspaceActiveOrSuspended({
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      })
+    ).toBe(false);
   });
 
-  it('should return false for OngoingCreation workspace', () => {
-    const workspace = {
-      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
-    };
-
-    expect(isWorkspaceActiveOrSuspended(workspace)).toBe(false);
-  });
-
-  it('should return false for PendingCreation workspace', () => {
-    const workspace = {
-      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-    };
-
-    expect(isWorkspaceActiveOrSuspended(workspace)).toBe(false);
-  });
-
-  it('should return false for undefined workspace', () => {
-    expect(isWorkspaceActiveOrSuspended(undefined)).toBe(false);
-  });
-
-  it('should return false for null workspace', () => {
+  it('returns false for null or undefined workspace', () => {
     expect(isWorkspaceActiveOrSuspended(null)).toBe(false);
+    expect(isWorkspaceActiveOrSuspended(undefined)).toBe(false);
   });
 });
