@@ -1,5 +1,5 @@
-import { isValidHostname } from '@/utils/url/isValidHostname';
 import { z } from 'zod';
+import { isValidHostname } from './isValidHostname';
 
 const getAbsoluteUrl = (value: string): string => {
   if (value.startsWith('http://') || value.startsWith('https://')) {
