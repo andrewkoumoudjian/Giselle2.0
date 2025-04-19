@@ -150,6 +150,15 @@ export default defineConfig(({ command, mode }) => {
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
       ],
+      include: [
+        'twenty-ui',
+        'twenty-ui/display',
+        'twenty-ui/components',
+        'twenty-ui/input',
+        'twenty-ui/navigation',
+        'twenty-ui/utilities',
+        'twenty-ui/theme'
+      ]
     },
 
     build: {
@@ -166,6 +175,15 @@ export default defineConfig(({ command, mode }) => {
             return null;
           },
         },
+        external: [
+          'twenty-ui/style.css',
+          'twenty-ui/display',
+          'twenty-ui/components',
+          'twenty-ui/input',
+          'twenty-ui/navigation',
+          'twenty-ui/utilities',
+          'twenty-ui/theme'
+        ]
       },
     },
 
@@ -190,6 +208,13 @@ export default defineConfig(({ command, mode }) => {
         // https://github.com/twentyhq/twenty/pull/10782/files
         // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+        'twenty-ui': path.resolve(__dirname, '../twenty-ui'),
+        'twenty-ui/display': path.resolve(__dirname, '../twenty-ui/display'),
+        'twenty-ui/components': path.resolve(__dirname, '../twenty-ui/components'),
+        'twenty-ui/input': path.resolve(__dirname, '../twenty-ui/input'),
+        'twenty-ui/navigation': path.resolve(__dirname, '../twenty-ui/navigation'),
+        'twenty-ui/utilities': path.resolve(__dirname, '../twenty-ui/utilities'),
+        'twenty-ui/theme': path.resolve(__dirname, '../twenty-ui/theme')
       },
     },
   };
