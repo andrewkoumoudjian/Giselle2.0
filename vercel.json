@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "node scripts/vercel-env-compatibility.js && node scripts/prepare-vercel-deployment.js && yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build",
+  "buildCommand": "node build.js",
   "outputDirectory": "packages/twenty-front/dist",
   "installCommand": "yarn install",
   "framework": "vite",
@@ -34,6 +34,10 @@
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
         }
       ]
     },
@@ -48,5 +52,8 @@
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "github": {
+    "silent": true
+  }
 }
