@@ -1,0 +1,7 @@
+{
+  "name": "@twenty-ui/feedback",
+  "version": "0.1.0",
+  "main": "../src/feedback/index.ts",
+  "types": "../src/feedback/index.ts",
+  "sideEffects": false
+}

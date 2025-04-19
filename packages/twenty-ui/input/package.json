@@ -1,7 +1,7 @@
 {
-    "name": "@twenty-ui/input",
-    "version": "0.1.0",
-    "main": "../src/input/index.ts",
-    "types": "../src/input/index.ts",
-    "sideEffects": false
+  "name": "@twenty-ui/input",
+  "version": "0.1.0",
+  "main": "../src/input/index.ts",
+  "types": "../src/input/index.ts",
+  "sideEffects": false
 }

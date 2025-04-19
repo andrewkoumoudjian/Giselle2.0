@@ -1,7 +1,7 @@
 {
-    "name": "@twenty-ui/display",
-    "version": "0.1.0",
-    "main": "../src/display/index.ts",
-    "types": "../src/display/index.ts",
-    "sideEffects": false
+  "name": "@twenty-ui/display",
+  "version": "0.1.0",
+  "main": "../src/display/index.ts",
+  "types": "../src/display/index.ts",
+  "sideEffects": false
 }

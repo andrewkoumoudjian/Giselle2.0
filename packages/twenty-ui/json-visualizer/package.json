@@ -1,0 +1,7 @@
+{
+  "name": "@twenty-ui/json-visualizer",
+  "version": "0.1.0",
+  "main": "../src/json-visualizer/index.ts",
+  "types": "../src/json-visualizer/index.ts",
+  "sideEffects": false
+}
