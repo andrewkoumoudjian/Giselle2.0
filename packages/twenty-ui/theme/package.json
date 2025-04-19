@@ -1,0 +1,7 @@
+{
+    "name": "@twenty-ui/theme",
+    "version": "0.1.0",
+    "main": "../src/theme/index.ts",
+    "types": "../src/theme/index.ts",
+    "sideEffects": false
+}

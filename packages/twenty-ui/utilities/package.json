@@ -1,0 +1,7 @@
+{
+    "name": "@twenty-ui/utilities",
+    "version": "0.1.0",
+    "main": "../src/utilities/index.ts",
+    "types": "../src/utilities/index.ts",
+    "sideEffects": false
+}

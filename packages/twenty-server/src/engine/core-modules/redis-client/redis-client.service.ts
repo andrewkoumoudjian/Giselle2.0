@@ -12,10 +12,10 @@ export class RedisClientService implements OnModuleDestroy {
 
   getClient() {
     if (!this.redisClient) {
-      const redisUrl = this.twentyConfigService.get('REDIS_URL');
+      const redisUrl = this.getRedisUrl();
 
       if (!redisUrl) {
-        throw new Error('REDIS_URL must be defined');
+        throw new Error('Redis connection URL could not be determined');
       }
 
       this.redisClient = new IORedis(redisUrl, {
@@ -24,6 +24,29 @@ export class RedisClientService implements OnModuleDestroy {
     }
 
     return this.redisClient;
+  }
+
+  private getRedisUrl(): string {
+    // First check if REDIS_URL is directly set
+    const redisUrl = this.twentyConfigService.get('REDIS_URL');
+    if (redisUrl) {
+      return redisUrl;
+    }
+
+    // Otherwise try to construct from host and password
+    const redisHost = this.twentyConfigService.get('REDIS_HOST');
+    const redisPassword = this.twentyConfigService.get('REDIS_PASSWORD');
+
+    if (!redisHost) {
+      throw new Error('Either REDIS_URL or REDIS_HOST must be provided');
+    }
+
+    // Construct URL with optional password
+    if (redisPassword) {
+      return `redis://:${redisPassword}@${redisHost}:6379`;
+    }
+
+    return `redis://${redisHost}:6379`;
   }
 
   async onModuleDestroy() {

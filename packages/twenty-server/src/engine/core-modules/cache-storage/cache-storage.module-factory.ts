@@ -20,11 +20,11 @@ export const cacheStorageModuleFactory = (
       return cacheModuleOptions;
     }*/
     case CacheStorageType.Redis: {
-      const redisUrl = twentyConfigService.get('REDIS_URL');
+      const redisUrl = getRedisUrl(twentyConfigService);
 
       if (!redisUrl) {
         throw new Error(
-          `${cacheStorageType} cache storage requires REDIS_URL to be defined, check your .env file`,
+          `${cacheStorageType} cache storage requires Redis connection information, check your .env file`,
         );
       }
 
@@ -40,3 +40,27 @@ export const cacheStorageModuleFactory = (
       );
   }
 };
+
+// Helper function to get Redis URL from various environment variables
+function getRedisUrl(twentyConfigService: TwentyConfigService): string | undefined {
+  // First check if REDIS_URL is directly set
+  const redisUrl = twentyConfigService.get('REDIS_URL');
+  if (redisUrl) {
+    return redisUrl;
+  }
+
+  // Otherwise try to construct from host and password
+  const redisHost = twentyConfigService.get('REDIS_HOST');
+  const redisPassword = twentyConfigService.get('REDIS_PASSWORD');
+
+  if (!redisHost) {
+    return undefined;
+  }
+
+  // Construct URL with optional password
+  if (redisPassword) {
+    return `redis://:${redisPassword}@${redisHost}:6379`;
+  }
+
+  return `redis://${redisHost}:6379`;
+}

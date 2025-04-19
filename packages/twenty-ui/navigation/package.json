@@ -1,0 +1,7 @@
+{
+    "name": "@twenty-ui/navigation",
+    "version": "0.1.0",
+    "main": "../src/navigation/index.ts",
+    "types": "../src/navigation/index.ts",
+    "sideEffects": false
+}

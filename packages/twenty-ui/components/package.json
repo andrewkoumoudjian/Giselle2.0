@@ -1,0 +1,7 @@
+{
+    "name": "@twenty-ui/components",
+    "version": "0.1.0",
+    "main": "../src/components/index.ts",
+    "types": "../src/components/index.ts",
+    "sideEffects": false
+}

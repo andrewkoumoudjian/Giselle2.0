@@ -157,6 +157,32 @@ Below are a few features we have implemented to date:
 - Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome!
 
+## Vercel Deployment
+
+To deploy this application to Vercel:
+
+1. Prepare the project:
+   ```bash
+   npm run prepare-vercel
+   ```
+
+2. Configure the following environment variables in your Vercel project:
+   - `DB_URL`: Your PostgreSQL database URL
+   - `SUPABASE_URL`: Your Supabase project URL
+   - `SUPABASE_ANON_KEY`: Your Supabase anonymous key
+   - `REDIS_HOST`: Your Redis host
+   - `REDIS_PASSWORD`: Your Redis password
+
+3. Link your repository and deploy through the Vercel dashboard, or use the Vercel CLI:
+   ```bash
+   vercel
+   ```
+
+4. If you encounter issues during deployment:
+   - Check that all required environment variables are set
+   - Ensure that the twenty-ui module directories are properly created
+   - Verify your Redis and database connections
+
 
 
 

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build",
+  "buildCommand": "yarn prepare-vercel && yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build",
   "outputDirectory": "packages/twenty-front/dist",
   "installCommand": "yarn install",
   "framework": "vite",
