@@ -1,8 +1,5 @@
 {
-  "buildCommand": "NODE_OPTIONS='--max-old-space-size=8192' npm run build",
+  "buildCommand": "VERCEL_FORCE_NO_BUILD_CACHE=1 NODE_OPTIONS='--max-old-space-size=8192' npm run build",
   "outputDirectory": "packages/twenty-front/dist",
-  "framework": "vite",
-  "buildEnvironment": {
-    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
-  }
+  "framework": "vite"
 }
