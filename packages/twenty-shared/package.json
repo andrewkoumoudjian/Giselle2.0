@@ -45,5 +45,35 @@
     "types",
     "utils",
     "workspace"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/twenty-shared.esm.js",
+      "require": "./dist/twenty-shared.cjs.js"
+    },
+    "./translations": {
+      "import": "./translations/dist/twenty-shared-translations.esm.js",
+      "require": "./translations/dist/twenty-shared-translations.cjs.js"
+    },
+    "./constants": {
+      "import": "./constants/dist/twenty-shared-constants.esm.js",
+      "require": "./constants/dist/twenty-shared-constants.cjs.js"
+    },
+    "./testing": {
+      "import": "./testing/dist/twenty-shared-testing.esm.js",
+      "require": "./testing/dist/twenty-shared-testing.cjs.js"
+    },
+    "./types": {
+      "import": "./types/dist/twenty-shared-types.esm.js",
+      "require": "./types/dist/twenty-shared-types.cjs.js"
+    },
+    "./utils": {
+      "import": "./utils/dist/twenty-shared-utils.esm.js",
+      "require": "./utils/dist/twenty-shared-utils.cjs.js"
+    },
+    "./workspace": {
+      "import": "./workspace/dist/twenty-shared-workspace.esm.js",
+      "require": "./workspace/dist/twenty-shared-workspace.cjs.js"
+    }
+  }
 }

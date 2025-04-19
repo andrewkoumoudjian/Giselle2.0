@@ -8,6 +8,16 @@
  */
 
 export { assertUnreachable } from './assertUnreachable';
+export {
+  ErrorCode,
+  AppError,
+  createError,
+  tryCatch,
+  isErrorCode,
+  formatErrorForDisplay,
+  createNetworkError,
+  createValidationError,
+} from './error-utils';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
