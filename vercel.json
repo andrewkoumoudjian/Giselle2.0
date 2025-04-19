@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "node build.js",
+  "buildCommand": "node ./build.js",
   "outputDirectory": "packages/twenty-front/dist",
   "installCommand": "yarn install",
   "framework": "vite",

@@ -26,7 +26,7 @@ type QuestionOutput = z.infer<typeof questionsOutputSchema>;
 @Injectable()
 export class InterviewQuestionGeneratorService {
   private readonly logger = new Logger(InterviewQuestionGeneratorService.name);
-  private parser: StructuredOutputParser<QuestionOutput>;
+  private parser: StructuredOutputParser;
   private questionGeneratorChain: RunnableSequence;
 
   constructor(
@@ -39,7 +39,7 @@ export class InterviewQuestionGeneratorService {
   private initializeChain() {
     try {
       // Initialize the output parser
-      this.parser = StructuredOutputParser.fromZodSchema<QuestionOutput>(questionsOutputSchema);
+      this.parser = StructuredOutputParser.fromZodSchema(questionsOutputSchema);
 
       // Create the prompt template
       const promptTemplate = PromptTemplate.fromTemplate(`

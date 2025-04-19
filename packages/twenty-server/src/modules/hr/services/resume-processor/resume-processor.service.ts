@@ -39,7 +39,7 @@ type ResumeData = z.infer<typeof resumeDataSchema>;
 @Injectable()
 export class ResumeProcessorService {
   private readonly logger = new Logger(ResumeProcessorService.name);
-  private parser: StructuredOutputParser<ResumeData>;
+  private parser: StructuredOutputParser;
   private chainWithParser: RunnableSequence;
 
   constructor(private configService: ConfigService) {
@@ -49,7 +49,7 @@ export class ResumeProcessorService {
   private initializeChain() {
     try {
       // Initialize the output parser
-      this.parser = StructuredOutputParser.fromZodSchema<ResumeData>(resumeDataSchema);
+      this.parser = StructuredOutputParser.fromZodSchema(resumeDataSchema);
 
       // Create the prompt template
       const promptTemplate = PromptTemplate.fromTemplate(`
