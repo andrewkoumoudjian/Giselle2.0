@@ -48,12 +48,5 @@
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false,
-  "env": {
-    "DB_URL": "@db_url",
-    "SUPABASE_URL": "@supabase_url",
-    "SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "REDIS_HOST": "@redis_host",
-    "REDIS_PASSWORD": "@redis_password"
-  }
+  "trailingSlash": false
 }
