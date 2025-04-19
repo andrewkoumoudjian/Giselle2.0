@@ -5,9 +5,9 @@
  */
 
 import { execSync } from 'child_process';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 
 // Define paths
 const __filename = fileURLToPath(import.meta.url);
@@ -15,14 +15,56 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname);
 const PREPARE_VERCEL_SCRIPT = path.join(ROOT_DIR, 'scripts', 'prepare-vercel-deployment.js');
 
+// Clean up before build to free memory
+function cleanupBefore() {
+  try {
+    console.log('\n== Cleaning up before build ==');
+    // Remove node_modules/.cache
+    const cacheDir = path.join(ROOT_DIR, 'node_modules', '.cache');
+    if (fs.existsSync(cacheDir)) {
+      execSync(`rm -rf ${cacheDir}`);
+      console.log('Removed node_modules/.cache');
+    }
+    
+    // Remove node_modules/.vite
+    const viteDir = path.join(ROOT_DIR, 'node_modules', '.vite');
+    if (fs.existsSync(viteDir)) {
+      execSync(`rm -rf ${viteDir}`);
+      console.log('Removed node_modules/.vite');
+    }
+    
+    // Run garbage collection if possible
+    if (global.gc) {
+      console.log('Running garbage collection');
+      global.gc();
+    }
+  } catch (error) {
+    console.warn('Warning during cleanup:', error.message);
+  }
+}
+
 // Function to run a command and log output
 function runCommand(command, cwd = ROOT_DIR) {
   console.log(`Running: ${command}`);
+  
+  // Set NODE_OPTIONS environment variable if not already set
+  if (!process.env.NODE_OPTIONS || !process.env.NODE_OPTIONS.includes('--max-old-space-size=')) {
+    process.env.NODE_OPTIONS = process.env.NODE_OPTIONS 
+      ? `${process.env.NODE_OPTIONS} --max-old-space-size=8192`
+      : '--max-old-space-size=8192';
+    console.log(`Set NODE_OPTIONS to: ${process.env.NODE_OPTIONS}`);
+  }
+  
   try {
     execSync(command, { 
       cwd, 
       stdio: 'inherit',
-      env: { ...process.env, NODE_OPTIONS: '--max-old-space-size=4500' }
+      env: { 
+        ...process.env, 
+        NODE_OPTIONS: process.env.NODE_OPTIONS,
+        VITE_DISABLE_TYPESCRIPT_CHECKER: 'true',
+        VITE_DISABLE_ESLINT_CHECKER: 'true'
+      }
     });
     return true;
   } catch (error) {
@@ -112,6 +154,9 @@ async function buildForVercel() {
   console.log(`Current directory: ${ROOT_DIR}`);
   
   try {
+    // Run cleanup first
+    cleanupBefore();
+    
     // Check environment
     checkEnvironmentVariables();
     
@@ -131,11 +176,17 @@ async function buildForVercel() {
       throw new Error('Failed to build twenty-shared package');
     }
     
+    // Free up memory after each step if possible
+    if (global.gc) global.gc();
+    
     // Step 4: Build UI package
     console.log('\n== Building twenty-ui ==');
     if (!runCommand('yarn workspace twenty-ui build')) {
       throw new Error('Failed to build twenty-ui package');
     }
+    
+    // Free up memory after each step if possible
+    if (global.gc) global.gc();
     
     // Step 5: Build front package
     console.log('\n== Building twenty-front ==');

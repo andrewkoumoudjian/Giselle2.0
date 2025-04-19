@@ -144,30 +144,47 @@ export default defineConfig(({ command, mode }) => {
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: true,
+      chunkSizeWarningLimit: 2000,
+      minify: 'esbuild',
+      cssMinify: true,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
         },
         output: {
           manualChunks: (id) => {
-            if (
-              id.includes('apollo') ||
-              id.includes('lingui') ||
-              id.includes('lodash') ||
-              id.includes('react-dom') ||
-              id.includes('react-hook-form') ||
-              id.includes('react-router') ||
-              id.includes('slate') ||
-              id.includes('tiptap') ||
-              id.includes('rxjs') ||
-              id.includes('@blocknote/') ||
-              id.includes('twenty-shared/') ||
-              id.includes('twenty-ui/')
-            ) {
-              const name = id.split('/').find((segment) => segment.includes('@')) || id;
-              const packageName = name.includes('twenty-') ? name : name.split('/')[0];
-              return 'vendor_' + packageName;
+            if (id.includes('node_modules')) {
+              if (id.includes('apollo')) return 'vendor_apollo';
+              if (id.includes('lingui')) return 'vendor_lingui';
+              if (id.includes('lodash')) return 'vendor_lodash';
+              if (id.includes('react-dom')) return 'vendor_react-dom';
+              if (id.includes('react-hook-form')) return 'vendor_react-hook-form';
+              if (id.includes('react-router')) return 'vendor_react-router';
+              if (id.includes('slate')) return 'vendor_slate';
+              if (id.includes('tiptap')) return 'vendor_tiptap';
+              if (id.includes('rxjs')) return 'vendor_rxjs';
+              if (id.includes('@blocknote/')) return 'vendor_blocknote';
+              if (id.includes('@emotion/')) return 'vendor_emotion';
+              if (id.includes('@tabler/')) return 'vendor_tabler';
+              if (id.includes('framer-motion')) return 'vendor_framer-motion';
+              
+              const fileName = id.split('/').pop() || '';
+              const firstChar = fileName.charAt(0).toLowerCase();
+              
+              if (firstChar.match(/[a-d]/)) return 'vendor_a-d';
+              if (firstChar.match(/[e-h]/)) return 'vendor_e-h';
+              if (firstChar.match(/[i-l]/)) return 'vendor_i-l';
+              if (firstChar.match(/[m-p]/)) return 'vendor_m-p';
+              if (firstChar.match(/[q-t]/)) return 'vendor_q-t';
+              if (firstChar.match(/[u-z]/)) return 'vendor_u-z';
+              
+              return 'vendor_misc';
             }
+            
+            if (id.includes('twenty-shared/')) return 'twenty-shared';
+            if (id.includes('twenty-ui/')) return 'twenty-ui';
+            
+            return undefined;
           },
         },
       },
