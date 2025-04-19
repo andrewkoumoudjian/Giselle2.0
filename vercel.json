@@ -1,13 +1,44 @@
 {
   "version": 2,
-  "buildCommand": "yarn build",
+  "buildCommand": "yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build",
   "outputDirectory": "packages/twenty-front/dist",
   "installCommand": "yarn install",
   "framework": "vite",
   "devCommand": "yarn dev",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -16,43 +47,13 @@
       ]
     }
   ],
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "packages/twenty-front/dist",
-        "buildCommand": "yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build"
-      }
-    },
-    {
-      "src": "packages/twenty-server/api/**/*.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "packages/twenty-server/api/$1.ts"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "packages/twenty-front/dist/index.html"
-    }
-  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
   "env": {
-    "IS_SERVERLESS": "true",
-    "SQLITE_DISABLED": "true",
-    "PG_DATABASE_URL": "${POSTGRES_URL}",
-    "POSTGRES_URL": "${POSTGRES_URL}",
-    "POSTGRES_HOST": "${POSTGRES_HOST}",
-    "POSTGRES_USER": "${POSTGRES_USER}",
-    "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD}",
-    "POSTGRES_DATABASE": "${POSTGRES_DATABASE}",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "${NEXT_PUBLIC_SUPABASE_ANON_KEY}",
-    "SUPABASE_ANON_KEY": "${SUPABASE_ANON_KEY}",
-    "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}",
-    "JWT_SECRET": "${JWT_SECRET}",
-    "REDIS_URL": "${REDIS_URL}"
+    "DB_URL": "@db_url",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "REDIS_HOST": "@redis_host",
+    "REDIS_PASSWORD": "@redis_password"
   }
 }
