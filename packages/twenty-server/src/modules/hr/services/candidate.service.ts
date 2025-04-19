@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CandidateEntity } from '../entities/candidate.entity';
 import { AiService } from './ai/ai.service';
+import { ResumeProcessorService } from './resume-processor/resume-processor.service';
 
 @Injectable()
 export class CandidateService {
@@ -11,6 +12,7 @@ export class CandidateService {
     @InjectRepository(CandidateEntity)
     private candidateRepository: Repository<CandidateEntity>,
     private aiService: AiService,
+    private resumeProcessorService: ResumeProcessorService,
   ) {}
 
   async findAll(): Promise<CandidateEntity[]> {
@@ -18,7 +20,13 @@ export class CandidateService {
   }
 
   async findById(id: string): Promise<CandidateEntity> {
-    return this.candidateRepository.findOne({ where: { id } });
+    const candidate = await this.candidateRepository.findOne({ where: { id } });
+    
+    if (!candidate) {
+      throw new NotFoundException(`Candidate with ID ${id} not found`);
+    }
+    
+    return candidate;
   }
 
   async create(candidateData: Partial<CandidateEntity>): Promise<CandidateEntity> {
@@ -35,8 +43,18 @@ export class CandidateService {
     await this.candidateRepository.delete(id);
   }
 
-  // AI-powered resume analysis
+  // AI-powered resume analysis using LangChain
   async analyzeResume(resumeText: string): Promise<{
+    skills: string[];
+    experienceYears: number;
+    resumeData: Record<string, any>;
+  }> {
+    // Use the new LangChain-based resume processor
+    return this.resumeProcessorService.analyzeResume(resumeText);
+  }
+
+  // Legacy resume analysis (using the old service)
+  async analyzeResumeLegacy(resumeText: string): Promise<{
     skills: string[];
     experienceYears: number;
     resumeData: Record<string, any>;

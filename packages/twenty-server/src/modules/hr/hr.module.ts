@@ -12,8 +12,11 @@ import { AiService } from './services/ai/ai.service';
 import { ApplicationService } from './services/application.service';
 import { CandidatePersonMappingService } from './services/candidate-person-mapping.service';
 import { CandidateService } from './services/candidate.service';
+import { InterviewQuestionGeneratorService } from './services/interview-question-generator/interview-question-generator.service';
 import { InterviewService } from './services/interview.service';
+import { JobMatcherService } from './services/job-matcher/job-matcher.service';
 import { JobPostingService } from './services/job-posting.service';
+import { ResumeProcessorService } from './services/resume-processor/resume-processor.service';
 
 import { ApplicationController } from './controllers/application.controller';
 import { CandidatePersonMappingController } from './controllers/candidate-person-mapping.controller';
@@ -39,6 +42,9 @@ import { JobPostingController } from './controllers/job-posting.controller';
     InterviewService,
     CandidatePersonMappingService,
     AiService,
+    ResumeProcessorService,
+    JobMatcherService,
+    InterviewQuestionGeneratorService,
   ],
   controllers: [
     CandidateController,
@@ -54,6 +60,9 @@ import { JobPostingController } from './controllers/job-posting.controller';
     InterviewService,
     CandidatePersonMappingService,
     AiService,
+    ResumeProcessorService,
+    JobMatcherService,
+    InterviewQuestionGeneratorService,
   ],
 })
 export class HrModule {}
