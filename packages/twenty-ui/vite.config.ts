@@ -98,6 +98,13 @@ export default defineConfig(({ command }) => {
       }),
     ],
 
+    resolve: {
+      alias: {
+        '@ui': path.resolve(__dirname, './src'),
+        '@assets': path.resolve(__dirname, './src/assets')
+      },
+    },
+
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {

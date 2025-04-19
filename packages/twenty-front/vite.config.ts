@@ -177,6 +177,7 @@ export default defineConfig(({ command, mode }) => {
         // https://github.com/twentyhq/twenty/pull/10782/files
         // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+        '@ui': path.resolve(__dirname, '../twenty-ui/src'),
         'twenty-ui': path.resolve(__dirname, '../twenty-ui'),
         'twenty-ui/display': path.resolve(__dirname, '../twenty-ui/display'),
         'twenty-ui/components': path.resolve(__dirname, '../twenty-ui/components'),

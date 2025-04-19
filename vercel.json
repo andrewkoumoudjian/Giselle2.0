@@ -21,7 +21,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "packages/twenty-front/build",
+        "distDir": "packages/twenty-front/dist",
         "buildCommand": "yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build"
       }
     },
@@ -30,14 +30,14 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "packages/twenty-server/api/$1.ts"
+      "source": "/api/(.*)",
+      "destination": "packages/twenty-server/api/$1.ts"
     },
     {
-      "src": "/(.*)",
-      "dest": "packages/twenty-front/build/index.html"
+      "source": "/(.*)",
+      "destination": "packages/twenty-front/dist/index.html"
     }
   ],
   "env": {

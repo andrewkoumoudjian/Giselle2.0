@@ -1,3 +1,3 @@
-import { AnimationDurationObject } from '@ui/layout/animated-expandable-container/types/AnimationDurationObject';
+import { AnimationDurationObject } from './AnimationDurationObject';
 
 export type AnimationDurations = AnimationDurationObject | 'default';
