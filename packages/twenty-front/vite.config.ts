@@ -18,6 +18,7 @@ export default defineConfig(({ command, mode }) => {
   const isCoverage = mode === 'coverage';
   const isCI = Boolean(env.CI);
   const isVitestUI = Boolean(env.VITEST_UI);
+  const isProduction = mode === 'production';
 
   const port = env.PORT ? parseInt(env.PORT, 10) : 3000;
   const VITE_HOST = env.VITE_HOST;
@@ -68,6 +69,9 @@ export default defineConfig(({ command, mode }) => {
   if (!isBuild) {
     plugins.push(wyw());
   }
+
+  // Determine if sourcemaps should be enabled
+  const generateSourcemap = mode !== 'production' && env.VITE_BUILD_SOURCEMAP === 'true';
 
   return {
     root: __dirname,
@@ -143,7 +147,7 @@ export default defineConfig(({ command, mode }) => {
     build: {
       outDir: 'dist',
       emptyOutDir: true,
-      sourcemap: true,
+      sourcemap: false,
       chunkSizeWarningLimit: 2000,
       minify: 'esbuild',
       cssMinify: true,
@@ -154,7 +158,13 @@ export default defineConfig(({ command, mode }) => {
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules')) {
-              if (id.includes('apollo')) return 'vendor_apollo';
+              if (id.includes('@tabler/icons')) return 'vendor_tabler_icons';
+              if (id.includes('@emotion/react')) return 'vendor_emotion_react';
+              if (id.includes('@emotion/styled')) return 'vendor_emotion_styled';
+              if (id.includes('@emotion/cache')) return 'vendor_emotion_cache';
+              if (id.includes('@apollo/client')) return 'vendor_apollo_client';
+              if (id.includes('apollo')) return 'vendor_apollo_other';
+              if (id.includes('graphql')) return 'vendor_graphql';
               if (id.includes('lingui')) return 'vendor_lingui';
               if (id.includes('lodash')) return 'vendor_lodash';
               if (id.includes('react-dom')) return 'vendor_react-dom';
@@ -164,9 +174,11 @@ export default defineConfig(({ command, mode }) => {
               if (id.includes('tiptap')) return 'vendor_tiptap';
               if (id.includes('rxjs')) return 'vendor_rxjs';
               if (id.includes('@blocknote/')) return 'vendor_blocknote';
-              if (id.includes('@emotion/')) return 'vendor_emotion';
-              if (id.includes('@tabler/')) return 'vendor_tabler';
               if (id.includes('framer-motion')) return 'vendor_framer-motion';
+              
+              if (id.includes('node_modules/@mantine/')) return 'vendor_mantine';
+              if (id.includes('node_modules/@tanstack/')) return 'vendor_tanstack';
+              if (id.includes('node_modules/react-')) return 'vendor_react_libs';
               
               const fileName = id.split('/').pop() || '';
               const firstChar = fileName.charAt(0).toLowerCase();
@@ -183,6 +195,12 @@ export default defineConfig(({ command, mode }) => {
             
             if (id.includes('twenty-shared/')) return 'twenty-shared';
             if (id.includes('twenty-ui/')) return 'twenty-ui';
+            
+            if (id.includes('/modules/')) {
+              const modulePath = id.split('/modules/')[1];
+              const mainModule = modulePath.split('/')[0];
+              return `module_${mainModule}`;
+            }
             
             return undefined;
           },
