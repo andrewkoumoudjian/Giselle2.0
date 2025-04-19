@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -95,6 +96,10 @@ export default defineConfig(({ command, mode }) => {
     },
 
     plugins: [
+      externalizeDeps({
+        deps: ['twenty-shared', 'twenty-ui'],
+        include: [/^twenty-shared\/.*/, /^twenty-ui\/.*/],
+      }),
       react({
         jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],
@@ -157,7 +162,14 @@ export default defineConfig(({ command, mode }) => {
         'twenty-ui/input',
         'twenty-ui/navigation',
         'twenty-ui/utilities',
-        'twenty-ui/theme'
+        'twenty-ui/theme',
+        'twenty-shared',
+        'twenty-shared/translations',
+        'twenty-shared/constants',
+        'twenty-shared/testing',
+        'twenty-shared/types',
+        'twenty-shared/utils',
+        'twenty-shared/workspace'
       ]
     },
 
@@ -182,7 +194,14 @@ export default defineConfig(({ command, mode }) => {
           'twenty-ui/input',
           'twenty-ui/navigation',
           'twenty-ui/utilities',
-          'twenty-ui/theme'
+          'twenty-ui/theme',
+          'twenty-shared',
+          'twenty-shared/translations',
+          'twenty-shared/constants',
+          'twenty-shared/testing',
+          'twenty-shared/types',
+          'twenty-shared/utils',
+          'twenty-shared/workspace'
         ]
       },
     },
@@ -214,7 +233,14 @@ export default defineConfig(({ command, mode }) => {
         'twenty-ui/input': path.resolve(__dirname, '../twenty-ui/input'),
         'twenty-ui/navigation': path.resolve(__dirname, '../twenty-ui/navigation'),
         'twenty-ui/utilities': path.resolve(__dirname, '../twenty-ui/utilities'),
-        'twenty-ui/theme': path.resolve(__dirname, '../twenty-ui/theme')
+        'twenty-ui/theme': path.resolve(__dirname, '../twenty-ui/theme'),
+        'twenty-shared': path.resolve(__dirname, '../twenty-shared'),
+        'twenty-shared/translations': path.resolve(__dirname, '../twenty-shared/translations'),
+        'twenty-shared/constants': path.resolve(__dirname, '../twenty-shared/constants'),
+        'twenty-shared/testing': path.resolve(__dirname, '../twenty-shared/testing'),
+        'twenty-shared/types': path.resolve(__dirname, '../twenty-shared/types'),
+        'twenty-shared/utils': path.resolve(__dirname, '../twenty-shared/utils'),
+        'twenty-shared/workspace': path.resolve(__dirname, '../twenty-shared/workspace')
       },
     },
   };

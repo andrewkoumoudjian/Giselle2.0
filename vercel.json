@@ -6,7 +6,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "packages/twenty-front/build",
-        "buildCommand": "npx nx build twenty-shared && npx nx build twenty-front"
+        "buildCommand": "yarn workspace twenty-shared build && yarn workspace twenty-ui build && yarn workspace twenty-front build"
       }
     },
     {

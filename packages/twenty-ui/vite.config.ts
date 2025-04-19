@@ -5,6 +5,7 @@ import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts, { PluginOptions } from 'vite-plugin-dts';
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -68,6 +69,7 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
+      externalizeDeps(),
       react({
         jsxImportSource: '@emotion/react',
         plugins: [['@swc/plugin-emotion', {}]],
@@ -116,7 +118,16 @@ export default defineConfig(({ command }) => {
       },
       rollupOptions: {
         // External packages that should not be bundled into your library.
-        external: Object.keys(packageJson.dependencies || {}),
+        external: [
+          ...Object.keys(packageJson.dependencies || {}),
+          'twenty-shared',
+          'twenty-shared/translations',
+          'twenty-shared/constants',
+          'twenty-shared/testing',
+          'twenty-shared/types',
+          'twenty-shared/utils',
+          'twenty-shared/workspace'
+        ],
         output: [
           {
             assetFileNames: 'style.css',

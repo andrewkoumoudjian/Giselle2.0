@@ -1,6 +1,7 @@
 import { crx } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { defineConfig, Plugin } from 'vite';
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import manifest from './src/manifest';
@@ -27,6 +28,15 @@ export default defineConfig(() => {
       outDir: 'dist',
       rollupOptions: {
         output: { chunkFileNames: 'assets/chunk-[hash].js' },
+        external: [
+          'twenty-shared',
+          'twenty-shared/translations',
+          'twenty-shared/constants',
+          'twenty-shared/testing',
+          'twenty-shared/types',
+          'twenty-shared/utils',
+          'twenty-shared/workspace'
+        ]
       },
       target: 'ES2022',
     },
@@ -38,6 +48,12 @@ export default defineConfig(() => {
       hmr: { port: 3002 },
     },
 
-    plugins: [viteManifestHack, crx({ manifest }), react(), tsconfigPaths()],
+    plugins: [
+      viteManifestHack, 
+      externalizeDeps(),
+      crx({ manifest }), 
+      react(), 
+      tsconfigPaths()
+    ],
   };
 });

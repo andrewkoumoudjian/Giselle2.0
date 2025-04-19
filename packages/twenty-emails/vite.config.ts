@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // Define APP_LOCALES directly instead of importing from twenty-shared/translations
@@ -45,6 +46,7 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
 
   plugins: [
+    externalizeDeps(),
     react({
       plugins: [['@lingui/swc-plugin', {}]],
     }),
@@ -81,7 +83,18 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: [
+        'react', 
+        'react-dom', 
+        'react/jsx-runtime',
+        'twenty-shared',
+        'twenty-shared/translations',
+        'twenty-shared/constants',
+        'twenty-shared/testing',
+        'twenty-shared/types',
+        'twenty-shared/utils',
+        'twenty-shared/workspace'
+      ],
     },
   },
 });
