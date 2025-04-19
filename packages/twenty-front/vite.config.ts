@@ -53,7 +53,12 @@ export default defineConfig(({ command, mode }) => {
     tsconfigPaths({
       projects: ['tsconfig.json'],
     }),
-    svgr(),
+    svgr({
+      svgrOptions: {
+        ref: true,
+      },
+      include: ['**/*.svg?react', '../twenty-ui/src/assets/icons/*.svg'],
+    }),
     lingui({
       configPath: path.resolve(__dirname, './lingui.config.ts'),
     }),
@@ -67,6 +72,7 @@ export default defineConfig(({ command, mode }) => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
+    publicDir: 'public',
 
     server: {
       port: port,
@@ -169,6 +175,7 @@ export default defineConfig(({ command, mode }) => {
 
     optimizeDeps: {
       exclude: ['twenty-shared', 'twenty-ui'],
+      include: ['../twenty-ui/src/assets/icons/*.svg'],
     },
 
     resolve: {
@@ -178,6 +185,7 @@ export default defineConfig(({ command, mode }) => {
         // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
         '@ui': path.resolve(__dirname, '../twenty-ui/src'),
+        '@assets': path.resolve(__dirname, '../twenty-ui/src/assets'),
         'twenty-ui': path.resolve(__dirname, '../twenty-ui/src'),
         'twenty-ui/display': path.resolve(__dirname, '../twenty-ui/src/display'),
         'twenty-ui/components': path.resolve(__dirname, '../twenty-ui/src/components'),

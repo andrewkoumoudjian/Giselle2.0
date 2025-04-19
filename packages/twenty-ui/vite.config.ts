@@ -68,6 +68,10 @@ export default defineConfig(({ command }) => {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
+    build: {
+      copyPublicDir: true,
+    },
+    publicDir: 'src/assets',
     plugins: [
       externalizeDeps(),
       react({
@@ -77,7 +81,14 @@ export default defineConfig(({ command }) => {
       tsconfigPaths({
         projects: ['tsconfig.json'],
       }),
-      svgr(),
+      svgr({
+        include: ['**/*.svg'],
+        svgrOptions: {
+          ref: true,
+          svgo: true,
+          exportType: 'named',
+        },
+      }),
       dts(dtsConfig),
       checker(checkersConfig),
       wyw({
@@ -133,7 +144,8 @@ export default defineConfig(({ command }) => {
           'twenty-shared/testing',
           'twenty-shared/types',
           'twenty-shared/utils',
-          'twenty-shared/workspace'
+          'twenty-shared/workspace',
+          /\.svg\?react$/
         ],
         output: [
           {
