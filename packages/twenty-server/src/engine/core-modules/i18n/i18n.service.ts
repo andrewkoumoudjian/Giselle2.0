@@ -1,7 +1,42 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+
+// Define constants directly instead of importing from twenty-shared/translations
+const SOURCE_LOCALE = 'en';
+const APP_LOCALES = {
+  [SOURCE_LOCALE]: SOURCE_LOCALE,
+  'pseudo-en': 'pseudo-en',
+  'af-ZA': 'af-ZA',
+  'ar-SA': 'ar-SA',
+  'ca-ES': 'ca-ES',
+  'cs-CZ': 'cs-CZ',
+  'da-DK': 'da-DK',
+  'de-DE': 'de-DE',
+  'el-GR': 'el-GR',
+  'es-ES': 'es-ES',
+  'fi-FI': 'fi-FI',
+  'fr-FR': 'fr-FR',
+  'he-IL': 'he-IL',
+  'hu-HU': 'hu-HU',
+  'it-IT': 'it-IT',
+  'ja-JP': 'ja-JP',
+  'ko-KR': 'ko-KR',
+  'nl-NL': 'nl-NL',
+  'no-NO': 'no-NO',
+  'pl-PL': 'pl-PL',
+  'pt-BR': 'pt-BR',
+  'pt-PT': 'pt-PT',
+  'ro-RO': 'ro-RO',
+  'ru-RU': 'ru-RU',
+  'sr-Cyrl': 'sr-Cyrl',
+  'sv-SE': 'sv-SE',
+  'tr-TR': 'tr-TR',
+  'uk-UA': 'uk-UA',
+  'vi-VN': 'vi-VN',
+  'zh-CN': 'zh-CN',
+  'zh-TW': 'zh-TW',
+};
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
 import { messages as arMessages } from 'src/engine/core-modules/i18n/locales/generated/ar-SA';
@@ -82,6 +117,22 @@ export class I18nService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    this.loadTranslations();
+    await this.loadTranslations();
+  }
+
+  getLocale() {
+    return i18n.locale;
+  }
+
+  _(id: string, values?: Record<string, any>) {
+    return i18n._(id, values);
+  }
+
+  has(id: string) {
+    return i18n.has(id);
+  }
+
+  activate(locale: string) {
+    i18n.activate(locale);
   }
 }
