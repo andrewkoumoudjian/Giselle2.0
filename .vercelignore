@@ -1,0 +1,5 @@
+# Ignore Next.js specific files and directories
+.next/
+next.config.js
+next-env.d.ts
+next 

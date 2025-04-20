@@ -1,0 +1,7 @@
+{
+    "name": "twenty-front",
+    "framework": "vite",
+    "type": "module",
+    "deploymentType": "static",
+    "buildOutput": "dist"
+}
