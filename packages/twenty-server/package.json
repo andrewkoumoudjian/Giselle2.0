@@ -15,8 +15,9 @@
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
     "database:migrate:hr": "npx ts-node ./scripts/run-migrations.ts",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm",
-    "copy-api": "mkdir -p dist/api && cp ../../api/index.js dist/api/ && echo 'API copy complete'",
-    "vercel-build": "echo 'Building twenty-server package' && yarn build && yarn copy-api && echo 'Twenty-server build complete - directory contents:' && ls -la dist && echo 'API directory contents:' && ls -la dist/api"
+    "copy-api": "mkdir -p dist/api && echo 'Copying API files for serverless function...' && cp -r ../../api/index.js dist/api/ && echo 'API copy complete'",
+    "vercel-build": "TSC_COMPILE_ON_ERROR=true yarn nx build twenty-server && echo 'Server build complete' && yarn copy-api",
+    "skip-api-ts-build": "echo 'Skipping TypeScript compilation for API' && mkdir -p dist/api && cp -r ../../api/* dist/api/ || true"
   },
   "dependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",

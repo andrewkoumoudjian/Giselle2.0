@@ -1,0 +1,13 @@
+{
+    "name": "vercel-api-function",
+    "version": "1.0.0",
+    "description": "API serverless function for Vercel",
+    "main": "index.js",
+    "engines": {
+        "node": "18.x"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "serverless-http": "^3.2.0"
+    }
+}
