@@ -1,5 +1,5 @@
 {
-  "buildCommand": "NODE_OPTIONS=\"--max-old-space-size=6144\" VERCEL_FORCE_NO_BUILD_CACHE=1 npm run vercel-build",
+  "buildCommand": "NODE_OPTIONS=\"--max-old-space-size=6144\" VERCEL_FORCE_NO_BUILD_CACHE=1 yarn vercel-build",
   "outputDirectory": "packages/twenty-front/dist",
   "framework": "vite",
   "env": {

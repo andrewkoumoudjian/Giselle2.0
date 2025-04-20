@@ -7,7 +7,8 @@
     "build": "cross-env NODE_OPTIONS=\"--max-old-space-size=6144\" VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true vite build --mode production && sh ./scripts/inject-runtime-env.sh",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=6144 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx vite --host",
-    "tsup": "npx tsup"
+    "tsup": "npx tsup",
+    "vercel-build": "echo 'Building twenty-front package for Vercel deployment' && cross-env NODE_OPTIONS=\"--max-old-space-size=6144\" VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true yarn build"
   },
   "engines": {
     "node": "^18.17.1",
