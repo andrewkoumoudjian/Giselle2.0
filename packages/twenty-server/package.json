@@ -15,7 +15,7 @@
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
     "database:migrate:hr": "npx ts-node ./scripts/run-migrations.ts",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm",
-    "copy-api": "tsc -p tsconfig.api.json && cp -r api dist/api",
+    "copy-api": "mkdir -p dist/api && tsc -p tsconfig.api.json && cp -r api/*.ts dist/api/",
     "vercel-build": "yarn build && yarn copy-api"
   },
   "dependencies": {
