@@ -23,16 +23,23 @@ app.use((req, res, next) => {
   next();
 });
 
-// Define routes
+// Define simple routes for testing
+app.get('/api', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    message: 'API is operational',
+    timestamp: new Date().toISOString() 
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.post('/api/graphql', (req, res) => {
-  // For now, just return a placeholder response until we can properly integrate with NestJS
   res.status(200).json({
     data: {
-      message: "GraphQL endpoint is ready to be connected to your backend"
+      message: "GraphQL endpoint is ready"
     }
   });
 });
@@ -58,13 +65,13 @@ module.exports = async (req, res) => {
   
   try {
     // Process the request through the Express app
-    await handler(req, res);
+    return await handler(req, res);
   } catch (error) {
     console.error('[Vercel] Error in API handler:', error);
     
     // Check if response has not been sent yet
     if (!res.headersSent) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: 'Internal Server Error',
         error: error.message || 'Unknown error'
