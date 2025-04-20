@@ -6,7 +6,8 @@
   "env": {
     "VITE_DISABLE_TYPESCRIPT_CHECKER": "true",
     "VITE_DISABLE_ESLINT_CHECKER": "true",
-    "TURBO_TELEMETRY_DISABLED": "1"
+    "TURBO_TELEMETRY_DISABLED": "1",
+    "REACT_APP_SERVER_BASE_URL": "/api"
   },
   "rewrites": [
     {
@@ -15,7 +16,7 @@
     },
     {
       "source": "/graphql",
-      "destination": "/api/index"
+      "destination": "/api"
     },
     {
       "source": "/(.*)",
@@ -41,6 +42,27 @@
       ]
     },
     {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,PUT,DELETE,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        }
+      ]
+    },
+    {
       "source": "/assets/(.*)",
       "headers": [
         {
@@ -53,7 +75,8 @@
   "functions": {
     "api/index.js": {
       "memory": 1024,
-      "maxDuration": 10
+      "maxDuration": 10,
+      "includeFiles": "dist/**"
     }
   }
 }

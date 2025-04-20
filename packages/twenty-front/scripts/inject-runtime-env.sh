@@ -5,7 +5,10 @@ echo "Injecting runtime environment variables into index.html..."
 CONFIG_BLOCK=$(cat << EOF
     <script id="twenty-env-config">
       window._env_ = {
-        REACT_APP_SERVER_BASE_URL: "$REACT_APP_SERVER_BASE_URL"
+        REACT_APP_SERVER_BASE_URL: "$REACT_APP_SERVER_BASE_URL",
+        NODE_ENV: "$NODE_ENV",
+        DEBUG: "$DEBUG",
+        TELEMETRY_ENABLED: "$TELEMETRY_ENABLED"
       };
     </script>
     <!-- END: Twenty Config -->
@@ -23,3 +26,5 @@ echo "$CONFIG_BLOCK" | sed -i.bak '
   }
 ' dist/index.html
 rm -f dist/index.html.bak
+
+echo "Runtime environment variables injected successfully"
