@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "buildCommand": "NODE_OPTIONS=\"--max-old-space-size=6144\" VERCEL_FORCE_NO_BUILD_CACHE=1 yarn vercel-build",
   "outputDirectory": "dist",
   "framework": "vite",
@@ -10,7 +11,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index"
+      "destination": "/api"
     },
     {
       "source": "/graphql",
@@ -48,5 +49,11 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
