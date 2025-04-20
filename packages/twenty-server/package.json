@@ -15,7 +15,7 @@
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
     "database:migrate:hr": "npx ts-node ./scripts/run-migrations.ts",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm",
-    "copy-api": "mkdir -p dist/api && echo 'Compiling API for serverless function...' && tsc -p tsconfig.api.json && echo 'API compilation complete' && echo 'export * from \"./index\";' > dist/api/index.js",
+    "copy-api": "mkdir -p dist/api && cp ../../api/index.js dist/api/ && echo 'API copy complete'",
     "vercel-build": "echo 'Building twenty-server package' && yarn build && yarn copy-api && echo 'Twenty-server build complete - directory contents:' && ls -la dist && echo 'API directory contents:' && ls -la dist/api"
   },
   "dependencies": {
