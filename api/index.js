@@ -1,3 +1,5 @@
+'use strict';
+
 // Pure JavaScript serverless function for Vercel
 const express = require('express');
 const serverless = require('serverless-http');

@@ -379,8 +379,7 @@
       "packages/twenty-website",
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",
-      "tools/eslint-rules",
-      "api"
+      "tools/eslint-rules"
     ]
   }
 }
