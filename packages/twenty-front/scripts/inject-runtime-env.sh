@@ -21,5 +21,5 @@ echo "$CONFIG_BLOCK" | sed -i.bak '
     /<!-- BEGIN: Twenty Config -->/r /dev/stdin
     /<!-- END: Twenty Config -->/d
   }
-' build/index.html
-rm -f build/index.html.bak
+' dist/index.html
+rm -f dist/index.html.bak

@@ -4,6 +4,8 @@
   "author": "",
   "private": true,
   "license": "AGPL-3.0",
+:start_line:7
+-------
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
     "start:prod": "node dist/src/main",
@@ -11,7 +13,9 @@
     "worker:prod": "node dist/src/queue-worker/queue-worker",
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
     "database:migrate:prod": "NODE_TLS_REJECT_UNAUTHORIZED=0 DOTENV_CONFIG_PATH=../../.env node -r dotenv/config ../../node_modules/typeorm/cli.js migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && NODE_TLS_REJECT_UNAUTHORIZED=0 DOTENV_CONFIG_PATH=../../.env node -r dotenv/config ../../node_modules/typeorm/cli.js migration:run -d dist/src/database/typeorm/core/core.datasource",
-    "typeorm": "../../node_modules/typeorm/.bin/typeorm"
+    "typeorm": "../../node_modules/typeorm/.bin/typeorm",
+    "build": "nx build twenty-server",
+    "start": "node dist/src/main.js"
   },
   "dependencies": {
     "@clickhouse/client": "^1.11.0",
@@ -37,7 +41,11 @@
     "class-validator": "^0.14.0",
     "cloudflare": "^4.0.0",
     "connect-redis": "^7.1.1",
-    "express-session": "^1.18.1",
+    "express-session": "^1.18.1"
+  },
+  "devDependencies": {
+    "@vercel/node": "^2.0.0",
+    "@types/node": "^20.4.2",
     "graphql-middleware": "^6.1.35",
     "handlebars": "^4.7.8",
     "jsdom": "~22.1.0",
