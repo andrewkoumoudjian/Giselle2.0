@@ -1,12 +1,16 @@
 {
   "version": 2,
+:start_line:3
+-------
+:start_line:3
+-------
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
-    "OPENAI_API_KEY": "@openai_api_key",
-    "UPSTASH_REDIS_REST_URL": "@upstash_redis_rest_url",
-    "UPSTASH_REDIS_REST_TOKEN": "@upstash_redis_rest_token"
+    "NEXT_PUBLIC_SUPABASE_URL": "@SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY": "@SUPABASE_SERVICE_ROLE_KEY",
+    "OPENAI_API_KEY": "@OPENAI_API_KEY",
+    "UPSTASH_REDIS_REST_URL": "@UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN": "@UPSTASH_REDIS_REST_TOKEN"
   },
   "builds": [
     {
@@ -23,9 +27,15 @@
     {
       "src": "/api/(.*)",
       "dest": "packages/twenty-server/api/$1.ts"
+:start_line:31
+-------
     },
     {
       "src": "/(.*)",
+      "dest": "packages/twenty-front/dist/$1"
+    }
+  ]
+}
       "dest": "packages/twenty-front/dist/$1"
     }
   ]
