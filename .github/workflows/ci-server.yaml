@@ -15,7 +15,7 @@ env:
 
 jobs:
   changed-files-check:
-    uses: ./.github/workflows/changed-files.yaml
+    uses: andrewkoumoudjian/Giselle2.0/.github/workflows/changed-files.yaml@giselle2.5
     with:
       files: |
         package.json
