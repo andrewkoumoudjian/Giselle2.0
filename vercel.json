@@ -11,18 +11,14 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "packages/twenty-server/api/$1.ts"
+      "source": "/api/(.*)",
+      "destination": "packages/twenty-server/api/$1.ts"
     },
     {
-      "src": "/(.*)",
-      "dest": "packages/twenty-front/dist/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "packages/twenty-front/dist/index.html"
+      "source": "/(.*)",
+      "destination": "packages/twenty-front/dist/index.html"
     }
   ],
   "cleanUrls": true
