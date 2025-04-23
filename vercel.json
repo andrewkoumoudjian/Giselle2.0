@@ -1,9 +1,5 @@
 {
   "version": 2,
-:start_line:3
--------
-:start_line:3
--------
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "@SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY",
@@ -27,15 +23,9 @@
     {
       "src": "/api/(.*)",
       "dest": "packages/twenty-server/api/$1.ts"
-:start_line:31
--------
     },
     {
       "src": "/(.*)",
-      "dest": "packages/twenty-front/dist/$1"
-    }
-  ]
-}
       "dest": "packages/twenty-front/dist/$1"
     }
   ]
