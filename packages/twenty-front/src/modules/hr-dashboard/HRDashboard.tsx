@@ -1,36 +1,34 @@
 import {
-    Badge,
-    Box,
-    Button,
-    Flex,
-    Heading,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalHeader,
-    ModalOverlay,
-    Progress,
-    Stat,
-    StatHelpText,
-    StatLabel,
-    StatNumber,
-    Tab,
-    Table,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    Tbody,
-    Td,
-    Text,
-    Th,
-    Thead,
-    Tr,
-    useDisclosure,
-} from '@chakra-ui/react';
+  Badge,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Progress,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  useDisclosure
+} from 'twenty-ui';
+
+import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { supabase } from '../../../supabase/config';
+import { Card, CardContent, CardFooter, CardHeader } from 'twenty-ui/layout';
+/* Removed import of Section to avoid duplicate identifier errors */
+// import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout/section/components/Section';
 
 interface Candidate {
   id: string;
@@ -58,6 +56,24 @@ const HRDashboard = () => {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(true);
+  const [blindScreening, setBlindScreening] = useState(false);
+
+  // State for candidate comparison modal and selection
+  const [showComparisonModal, setShowComparisonModal] = useState(false);
+  const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
+
+  const toggleCandidateSelection = (candidateId: string) => {
+    setSelectedForComparison((prev) =>
+      prev.includes(candidateId)
+        ? prev.filter((id) => id !== candidateId)
+        : [...prev, candidateId],
+    );
+  };
+
+  const closeComparisonModal = () => {
+    setShowComparisonModal(false);
+    setSelectedForComparison([]);
+  };
 
   useEffect(() => {
     fetchApplications();
@@ -65,39 +81,18 @@ const HRDashboard = () => {
 
   const fetchApplications = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase
-      .from('giselle.applications')
-      .select(
-        `id,
-        status,
-        ai_score,
-        ai_analysis,
-        created_at,
-        candidate:candidate_id (id, first_name, last_name, email, resume_url),
-        job:job_id (id, title)`,
-      )
-      .order('created_at', { ascending: false });
-
-    if (error) {
+    try {
+      const response = await axios.get('/api/applications');
+      setApplications(response.data);
+    } catch (error) {
       console.error('Error fetching applications:', error);
-    } else {
-      setApplications(data || []);
     }
     setIsLoading(false);
   };
 
   const analyzeResume = async (applicationId: string) => {
     try {
-      const response = await fetch('/api/analyze-resume', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ applicationId }),
-      });
-
-      if (!response.ok) throw new Error('Analysis failed');
-
+      await axios.post(`/api/applications/${applicationId}/analyze`, { blindScreening });
       await fetchApplications();
     } catch (error) {
       console.error('Error analyzing resume:', error);
@@ -110,36 +105,34 @@ const HRDashboard = () => {
   };
 
   return (
-    <Box p={5}>
-      <Flex justify="space-between" align="center" mb={5}>
-        <Heading size="lg">HR Dashboard</Heading>
-        <Button colorScheme="blue" onClick={fetchApplications}>
-          Refresh
-        </Button>
-      </Flex>
+    <Flex p={5} flexDirection="column" gap={6}>
+      <Heading size="lg" mb={4}>
+        HR Dashboard
+      </Heading>
+
+      <Button colorScheme="blue" onClick={fetchApplications} mb={4} alignSelf="flex-start">
+        Refresh Applications
+      </Button>
 
       {isLoading ? (
         <Progress isIndeterminate />
       ) : (
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Candidate</Th>
-              <Th>Job</Th>
-              <Th>Status</Th>
-              <Th>AI Score</Th>
-              <Th>Applied</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {applications.map((app) => (
-              <Tr key={app.id}>
-                <Td>
-                  {app.candidate.first_name} {app.candidate.last_name}
-                </Td>
-                <Td>{app.job.title}</Td>
-                <Td>
+        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(320px, 1fr))" gap={4}>
+          {applications.map((app) => (
+            <Card key={app.id} rounded fullWidth>
+              <CardHeader>
+                {blindScreening ? (
+                  <Text>
+                    Candidate #{app.id.slice(0, 6)} (Blind)
+                  </Text>
+                ) : (
+                  <>
+                    {app.candidate.first_name} {app.candidate.last_name} - {app.job.title}
+                  </>
+                )}
+              </CardHeader>
+              <CardContent>
+                <Box mb={2}>
                   <Badge
                     colorScheme={
                       app.status === 'shortlisted'
@@ -153,8 +146,9 @@ const HRDashboard = () => {
                   >
                     {app.status}
                   </Badge>
-                </Td>
-                <Td>
+                </Box>
+                <Box mb={2}>
+                  AI Score:{' '}
                   {app.ai_score ? (
                     <Badge
                       colorScheme={
@@ -170,26 +164,22 @@ const HRDashboard = () => {
                   ) : (
                     <Badge colorScheme="gray">Not analyzed</Badge>
                   )}
-                </Td>
-                <Td>{new Date(app.created_at).toLocaleDateString()}</Td>
-                <Td>
-                  <Button size="sm" mr={2} onClick={() => openDetails(app)}>
-                    Details
+                </Box>
+                <Box mb={2}>Applied: {new Date(app.created_at).toLocaleDateString()}</Box>
+              </CardContent>
+              <CardFooter>
+                <Button size="sm" mr={2} onClick={() => openDetails(app)}>
+                  Details
+                </Button>
+                {!app.ai_score && (
+                  <Button size="sm" colorScheme="teal" onClick={() => analyzeResume(app.id)}>
+                    Analyze
                   </Button>
-                  {!app.ai_score && (
-                    <Button
-                      size="sm"
-                      colorScheme="teal"
-                      onClick={() => analyzeResume(app.id)}
-                    >
-                      Analyze
-                    </Button>
-                  )}
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+                )}
+              </CardFooter>
+            </Card>
+          ))}
+        </Box>
       )}
 
       {selectedApp && (
@@ -197,8 +187,16 @@ const HRDashboard = () => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              {selectedApp.candidate.first_name}{' '}
-              {selectedApp.candidate.last_name}
+              {blindScreening ? (
+                <Text>
+                  Candidate #{selectedApp.id.slice(0, 6)} (Blind)
+                </Text>
+              ) : (
+                <>
+                  {selectedApp.candidate.first_name}{' '}
+                  {selectedApp.candidate.last_name}
+                </>
+              )}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
@@ -207,6 +205,8 @@ const HRDashboard = () => {
                   <Tab>Summary</Tab>
                   <Tab>Skills Analysis</Tab>
                   <Tab>Job Match</Tab>
+                  <Tab>Interview Scheduling</Tab>
+                  <Tab>Feedback</Tab>
                 </TabList>
                 <TabPanels>
                   <TabPanel>
@@ -320,14 +320,85 @@ const HRDashboard = () => {
                       <Text>No matching analysis available</Text>
                     )}
                   </TabPanel>
+                  <TabPanel>
+                    {/* Interview Scheduling Form */}
+                    <Box>
+                      <Heading size="sm" mb={4}>Schedule Interview</Heading>
+                      <form
+                        onSubmit={e => {
+                          e.preventDefault();
+                          // TODO: Implement interview scheduling handler
+                          alert('Interview scheduled (mock)');
+                        }}
+                      >
+                        <Box mb={3}>
+                          <label htmlFor="interviewDate">Date:</label>
+                          <input
+                            type="date"
+                            id="interviewDate"
+                            name="interviewDate"
+                            required
+                            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+                          />
+                        </Box>
+                        <Box mb={3}>
+                          <label htmlFor="interviewTime">Time:</label>
+                          <input
+                            type="time"
+                            id="interviewTime"
+                            name="interviewTime"
+                            required
+                            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+                          />
+                        </Box>
+                        <Box mb={3}>
+                          <label htmlFor="interviewMode">Mode:</label>
+                          <select
+                            id="interviewMode"
+                            name="interviewMode"
+                            required
+                            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+                          >
+                            <option value="in-person">In-person</option>
+                            <option value="video">Video Call</option>
+                            <option value="phone">Phone Call</option>
+                          </select>
+                        </Box>
+                        <Button type="submit" colorScheme="blue">Schedule</Button>
+                      </form>
+                    </Box>
+                  </TabPanel>
+                  <TabPanel>
+                    {/* Feedback Collection Form */}
+                    <Box>
+                      <Heading size="sm" mb={4}>Candidate Feedback</Heading>
+                      <form
+                        onSubmit={e => {
+                          e.preventDefault();
+                          // TODO: Implement feedback submission handler
+                          alert('Feedback submitted (mock)');
+                        }}
+                      >
+                        <Box mb={3}>
+                          <label htmlFor="feedbackText">Feedback:</label>
+                          <textarea
+                            id="feedbackText"
+                            name="feedbackText"
+                            rows={5}
+                            required
+                            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+                          />
+                        </Box>
+                        <Button type="submit" colorScheme="green">Submit Feedback</Button>
+                      </form>
+                    </Box>
+                  </TabPanel>
                 </TabPanels>
               </Tabs>
             </ModalBody>
           </ModalContent>
         </Modal>
       )}
-    </Box>
+    </Flex>
   );
 };
-
-export default HRDashboard;

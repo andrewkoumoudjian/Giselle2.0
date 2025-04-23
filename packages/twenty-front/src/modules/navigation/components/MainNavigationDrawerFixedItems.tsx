@@ -46,6 +46,16 @@ export const MainNavigationDrawerFixedItems = () => {
           }}
           Icon={IconSettings}
         />
+        <NavigationDrawerItem
+          label={t`HR Dashboard`}
+          to="/hr-dashboard"
+          Icon={() => (
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z" />
+              <path fillRule="evenodd" d="M8 8a3 3 0 100-6 3 3 0 000 6z" />
+            </svg>
+          )}
+        />
       </>
     )
   );

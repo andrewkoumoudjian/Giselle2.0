@@ -1,14 +1,10 @@
+import React from 'react';
 import ReactDOM from 'react-dom/client';
+import App from './modules/app/App';
 
-import '@emotion/react';
-
-import { App } from '@/app/components/App';
-import 'react-loading-skeleton/dist/skeleton.css';
-import 'twenty-ui/style.css';
-import './index.css';
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') ?? document.body,
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
-
-root.render(<App />);
