@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "installCommand": "yarn install && yarn run vercel-build",
   "builds": [
     {
       "src": "packages/twenty-front/package.json",
