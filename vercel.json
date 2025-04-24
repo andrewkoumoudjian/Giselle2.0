@@ -4,6 +4,14 @@
   "buildCommand": "yarn vercel-build",
   "builds": [
     {
+      "src": "packages/twenty-ui/package.json",
+      "use": "@vercel/static-build",
+      "config": { 
+        "buildCommand": "yarn build",
+        "distDir": "dist"
+      }
+    },
+    {
       "src": "packages/twenty-front/package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "dist" }
