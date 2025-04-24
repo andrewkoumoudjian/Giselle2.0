@@ -2,7 +2,7 @@
   "main": "dist/twenty-shared-translations.cjs.js",
   "module": "dist/twenty-shared-translations.esm.js",
   "scripts": {
-    "build": "preconstruct build",
-    "prepare": "yarn build"
+    "build": "tsc --outDir dist",
+    "prepare": "npm run build"
   }
 }
