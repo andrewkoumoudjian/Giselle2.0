@@ -273,7 +273,7 @@
         "build": {
           "executor": "nx:run-commands",
           "options": {
-            "command": "yarn build",
+            "command": "yarn prebuild && yarn build",
             "cwd": "packages/twenty-front"
           },
           "dependsOn": ["^build"]

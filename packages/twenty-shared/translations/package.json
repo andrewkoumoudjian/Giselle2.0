@@ -2,6 +2,7 @@
   "main": "dist/twenty-shared-translations.cjs.js",
   "module": "dist/twenty-shared-translations.esm.js",
   "scripts": {
-    "build": "preconstruct build"
+    "build": "preconstruct build",
+    "prepare": "yarn build"
   }
 }
