@@ -1,10 +1,10 @@
 {
   "name": "twenty-shared-translations",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/twenty-shared-translations.cjs.js",
+  "module": "dist/twenty-shared-translations.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc --outDir dist",
+    "build": "tsc --outDir dist && cp dist/index.js dist/twenty-shared-translations.esm.js && cp dist/index.js dist/twenty-shared-translations.cjs.js",
     "prepare": "npm run build"
   },
   "files": [
