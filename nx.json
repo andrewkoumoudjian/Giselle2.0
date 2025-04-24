@@ -295,4 +295,21 @@
   },
   "useInferencePlugins": false,
   "defaultBase": "main"
+,
+  "projects": {
+    "twenty-shared-translations": {
+      "root": "packages/twenty-shared/translations",
+      "sourceRoot": "packages/twenty-shared/translations/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "yarn build",
+            "cwd": "packages/twenty-shared/translations"
+          }
+        }
+      }
+    }
+  }
 }
