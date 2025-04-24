@@ -1,7 +1,7 @@
 {
   "version": 2,
   "installCommand": "yarn install",
-  "buildCommand": "yarn workspaces run build",
+  "buildCommand": "yarn vercel-build",
   "builds": [
     {
       "src": "packages/twenty-front/package.json",
