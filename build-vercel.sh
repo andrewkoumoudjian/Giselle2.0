@@ -3,13 +3,11 @@ set -e
 
 echo "Starting custom Vercel build script..."
 
-# Build the translations package first
-echo "Building twenty-shared/translations package..."
-cd packages/twenty-shared/translations
-npm run build
-cd ../../..
+# Install monaco-editor to fix TS errors
+echo "Installing missing dependencies..."
+yarn add monaco-editor --dev
 
-# Build the shared package next
+# First build the shared package without translations
 echo "Building twenty-shared package..."
 cd packages/twenty-shared
 yarn build
@@ -21,9 +19,11 @@ cd packages/twenty-ui
 yarn build
 cd ../..
 
-# Finally build the front-end
+# Now build the front-end
 echo "Building twenty-front package..."
 cd packages/twenty-front
+# Set environment variable to bypass translations
+export SKIP_TRANSLATIONS=true
 yarn build
 cd ../..
 
