@@ -195,17 +195,6 @@
         "text": { "reporter": "text" }
       }
     },
-    "storybook:serve-and-test:static": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --shard={args.shard} --checkCoverage={args.checkCoverage} --port={args.port} --configuration={args.scope}'"
-        ],
-        "shard": "1/1",
-        "checkCoverage": true,
-        "port": 6006
-      }
-    },
     "chromatic": {
       "executor": "nx:run-commands",
       "options": {
@@ -224,40 +213,6 @@
           "ci": "--exit-zero-on-changes"
         }
       }
-    },
-    "@nx/jest:jest": {
-      "cache": true,
-      "inputs": [
-        "^default",
-        "excludeStories",
-        "{workspaceRoot}/jest.preset.js"
-      ],
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
-    },
-    "@nx/eslint:lint": {
-      "cache": true,
-      "inputs": [
-        "default",
-        "{workspaceRoot}/.eslintrc.js",
-        "{workspaceRoot}/tools/eslint-rules/**/*"
-      ]
-    },
-    "@nx/vite:test": {
-      "cache": true,
-      "inputs": ["default", "^default"]
-    },
-    "@nx/vite:build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^default"]
     }
   },
   "installation": {
@@ -294,8 +249,7 @@
     }
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
-,
+  "defaultBase": "main",
   "projects": {
     "twenty-shared-translations": {
       "root": "packages/twenty-shared/translations",

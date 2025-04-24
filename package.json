@@ -162,7 +162,6 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "passport-microsoft": "^2.0.0",
     "patch-package": "^8.0.0",
     "pg": "^8.11.3",
     "pg-boss": "^9.0.3",
@@ -311,7 +310,7 @@
     "cross-var": "^1.1.0",
     "danger": "^11.3.0",
     "dotenv-cli": "^7.2.1",
-    "drizzle-kit": "^0.20.14",
+    "drizzle-orm": "^0.20.14",
     "esbuild": "^0.23.0",
     "eslint": "^8.53.0",
     "eslint-config-next": "14.0.4",
@@ -380,6 +379,6 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "vercel-build": "nx run twenty-shared-translations:build && nx run twenty-shared:build && nx build twenty-front",
-    "postinstall": "nx run twenty-shared-translations:build && nx run twenty-shared:build"
+    "prepare": "nx run twenty-shared-translations:build && nx run twenty-shared:build"
   }
 }
