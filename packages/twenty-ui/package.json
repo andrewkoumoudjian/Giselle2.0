@@ -42,7 +42,8 @@
     "zod": "3.23.8"
   },
   "scripts": {
-    "build": "npx vite build"
+    "build": "rimraf dist && npx vite build",
+    "start": "vite"
   },
   "files": [
     "dist",
