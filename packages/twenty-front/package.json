@@ -58,6 +58,7 @@
     "react-dom": "^18.2.0",
     "transliteration": "^2.3.5",
     "twenty-shared": "workspace:*",
+    "twenty-shared-translations": "workspace:*",
     "twenty-ui": "workspace:*"
   },
   "devDependencies": {

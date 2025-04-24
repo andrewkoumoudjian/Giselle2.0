@@ -379,9 +379,9 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "debug-registry": "npm config get registry && npm view drizzle-orm version",
-    "vercel-build": "yarn build:shared && yarn debug-registry && nx build twenty-front",
-    "prepare": "nx run twenty-shared-translations:build && nx run twenty-shared:build && yarn workspaces foreach -pt run prepare",
-    "build:shared": "yarn workspace twenty-shared-translations build",
+    "vercel-build": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn debug-registry && nx build twenty-front",
+    "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
+    "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
     "build:all": "yarn build:shared && yarn workspace twenty-front build"
   }
 }
