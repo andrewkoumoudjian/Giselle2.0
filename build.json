@@ -1,0 +1,7 @@
+{
+  "name": "twenty-ui-build",
+  "scripts": {
+    "build": "cd packages/twenty-shared && yarn build && cd ../twenty-ui && yarn build && cd ../twenty-front && yarn build",
+    "start": "cd packages/twenty-front && yarn start"
+  }
+}

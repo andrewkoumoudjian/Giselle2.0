@@ -310,7 +310,6 @@
     "cross-var": "^1.1.0",
     "danger": "^11.3.0",
     "dotenv-cli": "^7.2.1",
-    
     "esbuild": "^0.23.0",
     "eslint": "^8.53.0",
     "eslint-config-next": "14.0.4",
@@ -383,5 +382,21 @@
     "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
     "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
     "build:all": "yarn build:shared && yarn workspace twenty-front build"
+  },
+  "preconstruct": {
+    "packages": [
+      "packages/twenty-chrome-extension",
+      "packages/twenty-front",
+      "packages/twenty-server",
+      "packages/twenty-emails",
+      "packages/twenty-ui",
+      "packages/twenty-utils",
+      "packages/twenty-zapier",
+      "packages/twenty-website",
+      "packages/twenty-e2e-testing",
+      "packages/twenty-shared",
+      "packages/twenty-shared/translations",
+      "tools/eslint-rules"
+    ]
   }
 }
