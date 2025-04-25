@@ -1,82 +1,127 @@
 # Vercel Deployment Guide
 
-This document outlines the configuration for deploying the giselle2.5 monorepo to Vercel, including best practices, environment setup, and troubleshooting steps.
+This guide covers the deployment of the Twenty application on Vercel.
 
-## Deployment Configuration
+## Project Configuration
 
-### Workspace & Monorepo Structure
+We've optimized the project for Vercel deployment with the following changes:
 
-This project uses Yarn v4 workspaces configured in an array format:
+### Node.js Version
+
+The project is configured to use Node.js 18.x:
+- .nvmrc file specifies 18.17.1
+- package.json "engines" field sets "node": "18.x"
+- vercel.json specifies "runtime": "nodejs18.x"
+
+### Yarn Configuration
+
+To ensure compatibility with Vercel serverless functions:
+- We use Yarn 4 with the node_modules linker mode
+- `.yarnrc.yml` includes `nodeLinker: "node-modules"` to disable Plug'n'Play mode for better Vercel compatibility
+
+### Vercel Configuration
+
+In `vercel.json`, we've configured:
+
 ```json
-"workspaces": [
-  "packages/twenty-chrome-extension",
-  "packages/twenty-front",
-  "packages/twenty-server",
-  // ...additional packages
-]
+{
+  "version": 2,
+  "buildCommand": "yarn build:all",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 10
+    },
+    "packages/twenty-server/api/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "regions": ["iad1"],
+  "cleanUrls": true
+}
 ```
 
-### Build Process
+### API Routes
 
-The build process is orchestrated through Nx with optimized remote caching via Vercel:
-1. `yarn build:all` - Builds all workspace packages
-2. Individual build scripts are available per package (e.g., `yarn build:front`, `yarn build:server`)
-
-### Vercel-Specific Configuration
-
-The `vercel.json` file configures:
-- Memory allocation (1024MB) for serverless functions
-- Function timeout (10 seconds)
-- Region deployment (iad1 - N. Virginia)
-- Clean URLs for improved routing
+API routes are defined in:
+- `api/applications.ts` - Re-exports the handler from `packages/twenty-server/api/applications.ts`
+- `api/graphql.ts` - Re-exports the handler from `packages/twenty-server/api/graphql.ts`
 
 ## Environment Variables
 
-The following environment variables must be set in the Vercel dashboard:
+Required environment variables for Vercel:
 
-### Authentication & API
-- `REACT_APP_SERVER_BASE_URL` - API endpoint URL
-- `APP_SECRET` - For JWT authentication
-- `FRONT_BASE_URL` - URL of the frontend application
+```
+# Database
+PG_DATABASE_URL=
+POSTGRES_HOST=
+POSTGRES_PORT=5432
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
 
-### Database
-- `POSTGRES_HOST`
-- `POSTGRES_PORT`
-- `POSTGRES_DB`
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
+# Redis (for caching)
+REDIS_URL=
 
-### Redis
-- `REDIS_URL` - Connection URL for Redis
+# Frontend URL for CORS
+FRONTEND_URL=
 
-### Nx Remote Caching
-- `VERCEL_ACCESS_TOKEN` - OAuth token for Vercel API
-- `VERCEL_TEAM_ID` - Your Vercel team identifier
+# Authentication
+ENCRYPTION_SECRET=
+ACCESS_TOKEN_SECRET=
+LOGIN_TOKEN_SECRET=
 
-## CI/CD Workflow
+# For OAuth integrations
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-1. Push to the repository
-2. Vercel automatically starts the build process
-3. `yarn build:all` executes, building all packages 
-4. Function routes are established for serverless handlers
-5. Deployment completes to the configured region
+# Messaging
+MESSAGING_PROVIDER=
+
+# Supabase (if using)
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# For CI/CD
+VERCEL_TOKEN=
+VERCEL_ORG_ID=
+VERCEL_PROJECT_ID=
+SUPABASE_PROJECT_REF=
+SUPABASE_ACCESS_TOKEN=
+```
+
+## GitHub Actions Deployment
+
+We've added a GitHub Actions workflow for automated deployments:
+- Runs on push to main/giselle2.5 branches
+- Lints and tests the code
+- Applies Supabase migrations
+- Builds and deploys to Vercel
 
 ## Troubleshooting
 
-### Common Deployment Issues
+If you encounter issues with the build:
 
-- **Memory Errors**: If you see timeouts or OOM errors, you may need to increase the memory allocation in vercel.json
-- **Build Failures**: Check Nx cache settings and ensure the build command is completing successfully locally
-- **Environment Variables**: Verify all required environment variables are set in the Vercel dashboard
+1. **Duplicate exports**: Check barrel files for duplicate exports (e.g., in `packages/twenty-shared/src/utils/index.ts`)
+2. **Dependency mismatches**: Ensure NestJS packages are all on compatible versions (v10.x)
+3. **Memory limits**: Increase memory allocation in vercel.json if builds fail due to memory constraints
 
-### Performance Optimization
+## Local Testing
 
-- Nx remote caching is enabled for faster builds
-- Function memory is set to 1024MB for optimal performance
-- Region is set to iad1 for reduced latency in North America
+To verify your build locally before deploying:
 
-## Maintenance
+```bash
+# Install Vercel CLI
+npm i -g vercel
 
-- Periodically check for outdated dependencies
-- Run `yarn audit` to detect security vulnerabilities
-- Update Node.js version when Vercel updates its runtime support
+# Login to your Vercel account
+vercel login
+
+# Run a local build test
+vercel build
+```
+
+For more details, see [Vercel Serverless Functions documentation](https://vercel.com/docs/functions/serverless-functions).

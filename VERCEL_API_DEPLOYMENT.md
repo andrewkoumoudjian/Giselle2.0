@@ -1,31 +1,39 @@
-# Vercel API Deployment Optimization
+# Vercel API Deployment
 
-This document explains the optimizations made to ensure proper serverless function detection and deployment in Vercel.
+This document covers the requirements and configuration for deploying the Twenty server API on Vercel.
 
-## Key Changes Implemented
+## Updates for giselle2.5
 
-### 1. Top-Level API Directory
+The following changes have been made to optimize deployment:
 
-Vercel's serverless function detection only automatically discovers files located in a top-level `/api` directory. To address this, we've:
+1. **Node.js 18.x**: Configuration aligned across .nvmrc, package.json engines, and vercel.json runtime
+2. **NestJS v10**: All NestJS packages upgraded to v10 for compatibility with @graphql-yoga/nestjs
+3. **Barrel Files**: Fixed duplicate exports in packages/twenty-shared/src/utils/index.ts
+4. **Yarn Configuration**: Added nodeLinker: "node-modules" to .yarnrc.yml for Vercel compatibility
+5. **API Routes**: Fixed routing to include packages/twenty-server/api/*.ts handlers
 
-- Created a top-level `/api` directory
-- Added re-export files that point to the actual implementations in `packages/twenty-server/api`
+## API Server Requirements
 
-```typescript
-// api/graphql.ts
-import handler from '../packages/twenty-server/api/graphql';
-export const config = { maxDuration: 10 };
-export default handler;
-```
+1. **NestJS Framework**: The server uses NestJS v10 with GraphQL support
+2. **Database**: PostgreSQL is required for data storage
+3. **Redis**: Used for caching and message queuing
+4. **Node.js**: v18.x is the recommended and tested version
+5. **Serverless Configuration**: Optimized for Vercel serverless functions
 
-### 2. Vercel.json Configuration
+## Vercel Configuration
 
-The vercel.json file has been updated to correctly target the top-level API directory:
+The API servers are configured as serverless functions via:
 
 ```json
 {
   "functions": {
     "api/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 10
+    },
+    "packages/twenty-server/api/*.ts": {
+      "runtime": "nodejs18.x",
       "memory": 1024,
       "maxDuration": 10
     }
@@ -33,23 +41,55 @@ The vercel.json file has been updated to correctly target the top-level API dire
 }
 ```
 
-Note that we've removed the `runtime` specification, allowing Vercel to use its default Node.js runtime.
+## API Routes
 
-## Deployment Flow
+The API exposes:
 
-1. When you push your code to Vercel, the build process (`yarn build:all`) runs first
-2. After the build completes, Vercel scans for serverless functions in the top-level `/api` directory
-3. These functions are compiled and deployed as serverless endpoints
+1. **GraphQL API**: Accessible via `/api/graphql`
+2. **Applications API**: Accessible via `/api/applications`
 
-## Troubleshooting
+## Environment Variables
 
-If you encounter issues with function detection:
+The following environment variables must be set:
 
-1. Verify that the route path matches the file structure in the `/api` directory
-2. Check that the re-export files correctly import the handlers from their original location
-3. Ensure all necessary environment variables are set in the Vercel dashboard
+```
+# Database Connection
+PG_DATABASE_URL=postgres://user:password@host:5432/dbname
 
-## References
+# Authentication
+ENCRYPTION_SECRET=your-encryption-secret
+ACCESS_TOKEN_SECRET=your-access-token-secret
+LOGIN_TOKEN_SECRET=your-login-token-secret
 
-- [Vercel Serverless Functions Documentation](https://vercel.com/docs/functions/serverless-functions)
-- [Vercel API Routes with NestJS](https://vercel.com/guides/using-express-with-vercel)
+# Frontend Configuration
+FRONTEND_URL=https://your-frontend-url.com
+
+# Cache Storage
+REDIS_URL=redis://username:password@host:port
+
+# (Optional) Supabase Integration
+SUPABASE_URL=https://your-supabase-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=service-role-key
+```
+
+## Deployment Process
+
+1. Configure environment variables in Vercel dashboard
+2. Push to the main branch to trigger deployment
+3. Or use the GitHub Actions workflow we've provided for automated deployments
+
+## Monitoring and Debugging
+
+- Use Vercel's built-in logs for function execution monitoring
+- Set up Sentry by configuring `SENTRY_DSN` environment variable
+- Check server health via `/api/health` endpoint
+
+If you encounter build or runtime issues, check:
+1. Compatibility of dependencies (especially NestJS packages)
+2. Memory limits for serverless functions
+3. Database connection issues
+
+For local testing, use Vercel CLI:
+```bash
+vercel dev
+```

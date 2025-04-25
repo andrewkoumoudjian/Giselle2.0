@@ -16,7 +16,6 @@ export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
     getLogoUrlFromDomainName, sanitizeURL
 } from './image/getLogoUrlFromDomainName';
-export * from './is';
 export * from './json';
 export * from './math';
 export * from './number';
