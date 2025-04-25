@@ -4,12 +4,12 @@
   "buildCommand": "yarn build:all",
   "functions": {
     "api/**/*.ts": {
-      "runtime": "nodejs18.x",
+      "runtime": "@vercel/node@18.x",
       "memory": 1024,
       "maxDuration": 10
     },
     "packages/twenty-server/api/*.ts": {
-      "runtime": "nodejs18.x",
+      "runtime": "@vercel/node@18.x",
       "memory": 1024,
       "maxDuration": 10
     }
