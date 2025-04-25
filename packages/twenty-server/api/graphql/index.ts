@@ -1,5 +1,5 @@
-import { Handler } from '@vercel/node';
 import { NestFactory } from '@nestjs/core';
+import { Handler } from '@vercel/node';
 import { AppModule } from '../../src/app.module';
 
 // Set max duration for this handler

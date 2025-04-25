@@ -1,8 +1,8 @@
-import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { parse } from 'url';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../src/app.module';
 import { Handler } from '@vercel/node';
+import { IncomingMessage, ServerResponse } from 'http';
+import { parse } from 'url';
+import { AppModule } from '../src/app.module';
 
 // Set max duration for this handler
 export const config = {
