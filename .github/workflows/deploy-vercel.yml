@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
+          node-version: '20.x'
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
@@ -35,12 +35,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
+          node-version: '20.x'
           cache: 'yarn'
       - name: Install Supabase CLI
         run: npm install -g @supabase/cli
       - name: Run migrations
-        run: npx supabase db push --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --schema public
+        run: npx supabase db push --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --schema public --include-seed
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
@@ -54,7 +54,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
+          node-version: '20.x'
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
