@@ -7,7 +7,4 @@
  *                              |___/
  */
 
-export { default as isDefined } from './isDefined';
-export { default as isValidLocale } from './isValidLocale';
-export { default as isValidUuid } from './isValidUuid';
-export * from './__tests__';
+
