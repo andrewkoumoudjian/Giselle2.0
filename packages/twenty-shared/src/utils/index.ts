@@ -7,7 +7,8 @@
  *                              |___/
  */
 
-export { assertUnreachable } from './assertUnreachable';
+import assertUnreachableDefault from './assertUnreachable';
+export const assertUnreachable = assertUnreachableDefault;
 export * from './fieldMetadata';
 export * from './image';
 export * from './strings';
