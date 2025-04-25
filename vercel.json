@@ -1,18 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "framework": "nx",
   "buildCommand": "yarn build:all",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "packages/twenty-server/api/$1.ts"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "packages/twenty-front/dist/index.html"
-    }
-  ],
   "functions": {
     "packages/twenty-server/api/**/*.ts": {
       "runtime": "nodejs18.x",
@@ -20,5 +9,6 @@
       "maxDuration": 10
     }
   },
+  "regions": ["iad1"],
   "cleanUrls": true
 }
