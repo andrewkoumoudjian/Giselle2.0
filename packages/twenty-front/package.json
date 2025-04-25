@@ -9,8 +9,11 @@
     "start:prod": "NODE_ENV=production npx vite --host",
     "tsup": "npx tsup"
   },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "engines": {
-    "node": "^18.17.1",
+    "node": "22.x",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
