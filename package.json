@@ -385,7 +385,7 @@
     "build:server": "nx build twenty-server",
     "build:emails": "nx build twenty-emails",
     "build:utils": "tsc -b packages/twenty-utils",
-    "build:all": "nx run-many -t build --all",
+    "build:all": "yarn build:shared && yarn build:ui && yarn build:server && yarn build:front && yarn build:emails && yarn generate:barrels",
     "generate:barrels": "node scripts/generate-barrels.js",
     "dev": "yarn workspace twenty-server start:dev"
   },
