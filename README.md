@@ -223,6 +223,48 @@ vercel --prod
 
 If you encounter any build errors, please check the [VERCEL_API_DEPLOYMENT.md](VERCEL_API_DEPLOYMENT.md) file for common issues and solutions.
 
+## Vercel Serverless Deployment
+
+This project is configured for deployment on Vercel as serverless functions. The API endpoints are deployed as Vercel Serverless Functions, which provides automatic scaling and zero-infrastructure management.
+
+### Deployment Architecture
+
+- Frontend: Next.js application deployed on Vercel
+- API Server: NestJS GraphQL API deployed as Vercel Serverless Functions
+- Database: PostgreSQL database hosted on Supabase
+- Cache & Messaging: Redis hosted on Upstash or similar service
+
+### Key Configuration Files
+
+- `vercel.json`: Configures serverless function settings and routing
+- `api/*.js`: Proxy files that route requests to the appropriate handlers
+- `.github/workflows/vercel-deploy.yml`: CI/CD pipeline for automated deployments
+
+### Environment Variables
+
+See [VERCEL_API_DEPLOYMENT.md](./VERCEL_API_DEPLOYMENT.md) for the complete list of required environment variables.
+
+### Deploying Manually
+
+To deploy manually:
+
+```bash
+# Install dependencies
+yarn install
+
+# Build the project
+yarn build:all
+
+# Deploy to Vercel
+vercel
+```
+
+For production deployments:
+
+```bash
+vercel --prod
+```
+
 
 
 

@@ -99,6 +99,52 @@ If you encounter "next build failed" or other build errors, check:
 3. **Memory Issues**: For large builds, increase Vercel's memory allocation
 4. **Dependency Conflicts**: Resolve peer dependency issues, especially for NestJS packages
 
+### Common Issues and Solutions
+
+#### Missing exports in assertUnreachable.ts
+
+In `packages/twenty-shared/src/utils/assertUnreachable.ts`, the function is exported as a default export:
+
+```typescript
+export default function assertUnreachable(x: never, errorMessage?: string): never {
+  throw new Error(errorMessage ?? "Didn't expect to get here.");
+}
+```
+
+The barrel file imports it correctly:
+
+```typescript
+import assertUnreachableDefault from './assertUnreachable';
+export const assertUnreachable = assertUnreachableDefault;
+```
+
+This pattern is used for TypeScript exhaustiveness checking in switch statements.
+
+#### Vercel Functions Configuration
+
+Your `vercel.json` file should not specify a runtime directly as Vercel auto-detects Node.js runtimes. Use:
+
+```json
+{
+  "functions": {
+    "api/**/*.js": { 
+      "memory": 1024, 
+      "maxDuration": 10 
+    }
+  }
+}
+```
+
+#### Missing @nx/node Package
+
+If you see errors about `@nrwl/node:build` executor, install the renamed package:
+
+```bash
+yarn add -D @nx/node
+```
+
+Then update your Nx configuration to use the new executor names.
+
 ## Monitoring and Debugging
 
 - Use Vercel's built-in logs for function execution monitoring

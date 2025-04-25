@@ -234,6 +234,7 @@
     "@nx/eslint-plugin": "18.3.3",
     "@nx/jest": "18.3.3",
     "@nx/js": "18.3.3",
+    "@nx/node": "^20.8.1",
     "@nx/react": "18.3.3",
     "@nx/storybook": "18.3.3",
     "@nx/vite": "18.3.3",
@@ -389,6 +390,7 @@
     "build:all": "nx run-many -t build --all && yarn copy-api-handlers",
     "copy-api-handlers": "mkdir -p api && cp -f packages/twenty-server/dist/api/*.js api/ || true",
     "generate:barrels": "node scripts/generate-barrels.js",
+    "prebuild": "yarn generate:barrels",
     "dev": "yarn workspace twenty-server start:dev"
   },
   "preconstruct": {
