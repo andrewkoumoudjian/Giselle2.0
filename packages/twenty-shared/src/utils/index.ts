@@ -24,7 +24,6 @@ export * from './sortObject';
 export * from './string';
 export { capitalize } from './strings/capitalize';
 export * from './test';
-export * from './typeGuards';
 export * from './url';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
