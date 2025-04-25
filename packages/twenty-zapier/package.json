@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "dotenv": "^16.4.5",
+    "twenty-shared": "workspace:*",
     "zapier-platform-core": "15.5.1"
   },
   "devDependencies": {
