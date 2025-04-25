@@ -243,8 +243,10 @@
   },
   "tasksRunnerOptions": {
     "default": {
+      "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["storybook:build"]
+        "cacheableOperations": ["storybook:build", "build"],
+        "cacheDirectory": "/tmp/nx-cache"
       }
     }
   },

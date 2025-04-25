@@ -1,32 +1,7 @@
 {
   "version": 2,
-  "installCommand": "yarn install",
-  "buildCommand": "./build-vercel.sh",
-  "builds": [
-    {
-      "src": "packages/twenty-shared/package.json",
-      "use": "@vercel/static-build",
-      "config": { 
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "packages/twenty-ui/package.json",
-      "use": "@vercel/static-build",
-      "config": { 
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "packages/twenty-front/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
-    },
-    {
-      "src": "packages/twenty-server/api/**/*.ts",
-      "use": "@vercel/node"
-    }
-  ],
+  "framework": "nx",
+  "buildCommand": "yarn build:all",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -37,5 +12,13 @@
       "destination": "packages/twenty-front/dist/index.html"
     }
   ],
+  "functions": {
+    "packages/twenty-server/api/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1769,
+      "maxDuration": 10,
+      "regions": ["iad1"]
+    }
+  },
   "cleanUrls": true
 }
