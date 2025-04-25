@@ -4,8 +4,7 @@
   "buildCommand": "yarn build:all",
   "functions": {
     "packages/twenty-server/api/**/*.ts": {
-      "runtime": "nodejs18.x",
-      "memory": 1769,
+      "memory": 1024,
       "maxDuration": 10
     }
   },
