@@ -15,10 +15,14 @@
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
+    "rootDirs": ["api", "packages"],
     "paths": {
+      "@twentyhq/twenty-server/*": ["packages/twenty-server/src/*"],
       "@twenty-shared/*": ["packages/twenty-shared/src/*"],
       "@/*": ["packages/twenty-shared/src/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "allowJs": true
   },
   "exclude": ["node_modules", "tmp"]
 }

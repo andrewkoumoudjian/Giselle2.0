@@ -21,7 +21,7 @@ export * from './math';
 export * from './number';
 export * from './objects';
 export * from './sortObject';
-export * from './string';
+export * from './strings';
 export { capitalize } from './strings/capitalize';
 export * from './test';
 export * from './url';

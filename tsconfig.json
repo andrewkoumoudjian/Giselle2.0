@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true,
+    "esModuleInterop": true,
+    "allowJs": true
+  },
+  "include": ["api/**/*.ts", "packages/**/*/src"]
+}
