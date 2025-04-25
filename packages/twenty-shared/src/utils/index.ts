@@ -14,10 +14,9 @@ export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind
 export * from './format';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
-  getLogoUrlFromDomainName, sanitizeURL
+    getLogoUrlFromDomainName, sanitizeURL
 } from './image/getLogoUrlFromDomainName';
 export * from './is';
-export { isDefined } from './isDefined';
 export * from './json';
 export * from './math';
 export * from './number';
@@ -33,6 +32,7 @@ export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
+export { isDefined } from './validation/isDefined';
 export { isNonEmptyArray } from './validation/isNonEmptyArray';
 export { isNonEmptyObject } from './validation/isNonEmptyObject';
 export { isNonEmptyString } from './validation/isNonEmptyString';
