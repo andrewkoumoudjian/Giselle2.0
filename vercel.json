@@ -2,20 +2,27 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "buildCommand": "yarn build:all",
+  "cleanUrls": true,
   "functions": {
-    "api/**/*.js": {
+    "api/*.js": {
       "memory": 1024,
       "maxDuration": 10
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ],
   "regions": [
     "iad1"
-  ],
-  "cleanUrls": true
+  ]
 }
