@@ -25,7 +25,8 @@
         "buildTarget": "twenty-chrome-extension:build",
         "port": 3002,
         "open": true
-      }
+      },
+      "dependsOn": ["build"]
     },
     "reset:env": {
       "executor": "nx:run-commands",
@@ -48,7 +49,9 @@
         "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "ci": {
+          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs"
+        },
         "fix": {}
       }
     },

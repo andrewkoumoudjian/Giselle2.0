@@ -1,6 +1,8 @@
 {
   "namedInputs": {
-    "default": ["{projectRoot}/**/*"],
+    "default": [
+      "{projectRoot}/**/*"
+    ],
     "excludeStories": [
       "default",
       "!{projectRoot}/.storybook/*",
@@ -28,17 +30,26 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "inputs": ["^production", "production"],
-      "dependsOn": ["^build"]
+      "inputs": [
+        "^production",
+        "production"
+      ],
+      "dependsOn": [
+        "^build"
+      ]
     },
     "start": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
       "cache": true,
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "eslintConfig": "{projectRoot}/.eslintrc.cjs",
         "cache": true,
@@ -46,10 +57,16 @@
         "ignorePath": "{workspaceRoot}/.gitignore"
       },
       "configurations": {
-        "ci": { "cacheStrategy": "content" },
-        "fix": { "fix": true }
+        "ci": {
+          "cacheStrategy": "content"
+        },
+        "fix": {
+          "fix": true
+        }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "fmt": {
       "executor": "nx:run-commands",
@@ -63,10 +80,16 @@
         "write": false
       },
       "configurations": {
-        "ci": { "cacheStrategy": "content" },
-        "fix": { "write": true }
+        "ci": {
+          "cacheStrategy": "content"
+        },
+        "fix": {
+          "write": true
+        }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "typecheck": {
       "executor": "nx:run-commands",
@@ -76,24 +99,34 @@
         "command": "tsc -b tsconfig.json --incremental"
       },
       "configurations": {
-        "watch": { "watch": true }
+        "watch": {
+          "watch": true
+        }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "^default",
         "excludeStories",
         "{workspaceRoot}/jest.preset.js"
       ],
-      "outputs": ["{projectRoot}/coverage"],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
         "coverage": true,
-        "coverageReporters": ["text-summary"],
+        "coverageReporters": [
+          "text-summary"
+        ],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
       },
       "configurations": {
@@ -101,31 +134,49 @@
           "ci": true,
           "maxWorkers": 3
         },
-        "coverage": { "coverageReporters": ["lcov", "text"] },
-        "watch": { "watch": true }
+        "coverage": {
+          "coverageReporters": [
+            "lcov",
+            "text"
+          ]
+        },
+        "watch": {
+          "watch": true
+        }
       }
     },
     "test:e2e": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "storybook:build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["^default", "excludeTests"],
-      "outputs": ["{projectRoot}/{options.output-dir}"],
+      "inputs": [
+        "^default",
+        "excludeTests"
+      ],
+      "outputs": [
+        "{projectRoot}/{options.output-dir}"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "storybook:serve:dev": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "storybook dev",
@@ -134,7 +185,9 @@
     },
     "storybook:serve:static": {
       "executor": "nx:run-commands",
-      "dependsOn": ["storybook:build"],
+      "dependsOn": [
+        "storybook:build"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
@@ -147,8 +200,13 @@
     "storybook:test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["^default", "excludeTests"],
-      "outputs": ["{projectRoot}/coverage/storybook"],
+      "inputs": [
+        "^default",
+        "excludeTests"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/storybook"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -164,7 +222,10 @@
     },
     "storybook:test:no-coverage": {
       "executor": "nx:run-commands",
-      "inputs": ["^default", "excludeTests"],
+      "inputs": [
+        "^default",
+        "excludeTests"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -192,7 +253,9 @@
         "checkCoverage": true
       },
       "configurations": {
-        "text": { "reporter": "text" }
+        "text": {
+          "reporter": "text"
+        }
       }
     },
     "chromatic": {
@@ -216,7 +279,7 @@
     }
   },
   "installation": {
-    "version": "18.3.3"
+    "version": "20.8.1"
   },
   "generators": {
     "@nx/react": {
@@ -245,7 +308,12 @@
     "default": {
       "runner": "@vercel/remote-nx",
       "options": {
-        "cacheableOperations": ["build", "test", "lint", "storybook:build"],
+        "cacheableOperations": [
+          "build",
+          "test",
+          "lint",
+          "storybook:build"
+        ],
         "accessToken": "${VERCEL_ACCESS_TOKEN}",
         "teamId": "${VERCEL_TEAM_ID}",
         "cacheDirectory": "/tmp/nx-cache"
@@ -280,7 +348,9 @@
             "command": "yarn build",
             "cwd": "packages/twenty-shared"
           },
-          "dependsOn": ["twenty-shared-translations:build"]
+          "dependsOn": [
+            "twenty-shared-translations:build"
+          ]
         }
       }
     },
@@ -295,9 +365,13 @@
             "command": "yarn prebuild && yarn build",
             "cwd": "packages/twenty-front"
           },
-          "dependsOn": ["^build"]
+          "dependsOn": [
+            "^build"
+          ]
         }
       }
     }
-  }
+  },
+  "nxCloudAccessToken": "ZGFjMjg0MjItYzkyMC00YTg5LWFiNTEtNjEyNDg4M2M0ZjYzfHJlYWQtd3JpdGU="
 }
+

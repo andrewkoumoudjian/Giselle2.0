@@ -17,9 +17,9 @@
     "baseUrl": ".",
     "rootDirs": ["api", "packages"],
     "paths": {
-      "@twentyhq/twenty-server/*": ["packages/twenty-server/src/*"],
+      "@/*": ["packages/twenty-shared/src/*"],
       "@twenty-shared/*": ["packages/twenty-shared/src/*"],
-      "@/*": ["packages/twenty-shared/src/*"]
+      "@twentyhq/twenty-server/*": ["packages/twenty-server/src/*"]
     },
     "esModuleInterop": true,
     "allowJs": true
