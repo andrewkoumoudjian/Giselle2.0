@@ -1,21 +1,19 @@
 {
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/twenty-chrome-extension",
-      "packages/twenty-front",
-      "packages/twenty-server",
-      "packages/twenty-emails",
-      "packages/twenty-ui",
-      "packages/twenty-utils",
-      "packages/twenty-zapier",
-      "packages/twenty-website",
-      "packages/twenty-e2e-testing",
-      "packages/twenty-shared",
-      "packages/twenty-shared/translations",
-      "tools/eslint-rules"
-    ]
-  },
+  "workspaces": [
+    "packages/twenty-chrome-extension",
+    "packages/twenty-front",
+    "packages/twenty-server",
+    "packages/twenty-emails",
+    "packages/twenty-ui",
+    "packages/twenty-utils",
+    "packages/twenty-zapier",
+    "packages/twenty-website",
+    "packages/twenty-e2e-testing",
+    "packages/twenty-shared",
+    "packages/twenty-shared/translations",
+    "tools/eslint-rules"
+  ],
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
@@ -302,6 +300,7 @@
     "@typescript-eslint/experimental-utils": "^5.62.0",
     "@typescript-eslint/parser": "6.21.0",
     "@typescript-eslint/utils": "6.21.0",
+    "@vercel/remote-nx": "^2.0.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@vitest/ui": "1.4.0",
     "@yarnpkg/types": "^4.0.0",
@@ -384,6 +383,8 @@
     "build:ui": "nx build twenty-ui",
     "build:front": "nx build twenty-front",
     "build:server": "nx build twenty-server",
+    "build:emails": "nx build twenty-emails",
+    "build:utils": "tsc -b packages/twenty-utils",
     "build:all": "nx run-many -t build --all"
   },
   "preconstruct": {
