@@ -8,9 +8,11 @@ The following changes have been made to optimize deployment:
 
 1. **Node.js 18.x**: Configuration aligned across .nvmrc, package.json engines, and vercel.json runtime
 2. **NestJS v10**: All NestJS packages upgraded to v10 for compatibility with @graphql-yoga/nestjs
-3. **Barrel Files**: Fixed duplicate exports in packages/twenty-shared/src/utils/index.ts
+3. **Barrel Files**: Fixed duplicate exports in packages/twenty-shared/src/utils/index.ts by removing the isDefined.ts file which was causing conflicts with validation/isDefined.ts
 4. **Yarn Configuration**: Added nodeLinker: "node-modules" to .yarnrc.yml for Vercel compatibility
 5. **API Routes**: Fixed routing to include packages/twenty-server/api/*.ts handlers
+6. **API Imports**: Updated API route handlers to import from compiled output (dist) rather than source files
+7. **Barrel Generator**: Added a script to generate barrel files without duplicates via `yarn generate:barrels`
 
 ## API Server Requirements
 
@@ -70,6 +72,15 @@ REDIS_URL=redis://username:password@host:port
 # (Optional) Supabase Integration
 SUPABASE_URL=https://your-supabase-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=service-role-key
+
+# (Optional) QStash for background jobs
+QSTASH_TOKEN=your-qstash-token
+QSTASH_CURRENT_SIGNING_KEY=your-signing-key
+QSTASH_NEXT_SIGNING_KEY=your-next-signing-key
+
+# (Optional) Google Calendar Integration
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 ```
 
 ## Deployment Process
@@ -77,6 +88,16 @@ SUPABASE_SERVICE_ROLE_KEY=service-role-key
 1. Configure environment variables in Vercel dashboard
 2. Push to the main branch to trigger deployment
 3. Or use the GitHub Actions workflow we've provided for automated deployments
+
+## Troubleshooting Build Errors
+
+If you encounter "next build failed" or other build errors, check:
+
+1. **Duplicate Exports**: Make sure there are no duplicate exports across barrel files
+   - Run `yarn generate:barrels` to regenerate barrel files properly
+2. **Path Imports**: Ensure imports point to compiled output (dist) rather than source files
+3. **Memory Issues**: For large builds, increase Vercel's memory allocation
+4. **Dependency Conflicts**: Resolve peer dependency issues, especially for NestJS packages
 
 ## Monitoring and Debugging
 

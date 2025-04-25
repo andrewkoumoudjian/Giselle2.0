@@ -157,6 +157,72 @@ Below are a few features we have implemented to date:
 - Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
 
+# Giselle 2.5 - Twenty CRM API
+
+This repository contains the Twenty CRM API implementation optimized for deployment to Vercel.
+
+## Deployment
+
+For detailed deployment instructions, please see:
+- [VERCEL_API_DEPLOYMENT.md](VERCEL_API_DEPLOYMENT.md) - API deployment configuration and troubleshooting
+
+## Key Features
+
+1. **NestJS v10 Backend**: GraphQL API with full CRUD operations
+2. **Serverless Optimization**: Configurations for Vercel serverless functions
+3. **Database Support**: PostgreSQL database with TypeORM
+4. **Cache**: Redis cache integration
+5. **Authentication**: JWT-based authentication system
+6. **Background Processing**: QStash integration for background jobs
+
+## Environment Configuration
+
+The application requires several environment variables to function correctly. See the [VERCEL_API_DEPLOYMENT.md](VERCEL_API_DEPLOYMENT.md) file for a complete list of required environment variables.
+
+## Local Development
+
+1. Install dependencies:
+```bash
+yarn install
+```
+
+2. Start the development server:
+```bash
+yarn dev
+```
+
+3. Build for production:
+```bash
+yarn build:all
+```
+
+4. Test locally before deployment:
+```bash
+vercel dev
+```
+
+## Deployment to Vercel
+
+### Automated Deployment (Recommended)
+
+We've configured GitHub Actions for automated deployments to Vercel. Push to the `main` or `giselle2.5` branch to trigger automatic deployment.
+
+### Manual Deployment
+
+1. Install the Vercel CLI:
+```bash
+npm i -g vercel
+```
+
+2. Deploy to Vercel:
+```bash
+vercel --prod
+```
+
+## Troubleshooting
+
+If you encounter any build errors, please check the [VERCEL_API_DEPLOYMENT.md](VERCEL_API_DEPLOYMENT.md) file for common issues and solutions.
+
 
 
 

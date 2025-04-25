@@ -1,5 +1,8 @@
 {
   "private": true,
+  "engines": {
+    "node": "18.x"
+  },
   "workspaces": [
     "packages/twenty-chrome-extension",
     "packages/twenty-front",
@@ -358,11 +361,6 @@
     "vite-plugin-svgr": "^4.2.0",
     "vitest": "1.4.0"
   },
-  "engines": {
-    "node": "18.x",
-    "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
-  },
   "license": "AGPL-3.0",
   "name": "twenty",
   "packageManager": "yarn@4.4.0",
@@ -387,7 +385,9 @@
     "build:server": "nx build twenty-server",
     "build:emails": "nx build twenty-emails",
     "build:utils": "tsc -b packages/twenty-utils",
-    "build:all": "nx run-many -t build --all"
+    "build:all": "nx run-many -t build --all",
+    "generate:barrels": "node scripts/generate-barrels.js",
+    "dev": "yarn workspace twenty-server start:dev"
   },
   "preconstruct": {
     "packages": [

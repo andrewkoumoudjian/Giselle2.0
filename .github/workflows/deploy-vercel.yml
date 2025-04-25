@@ -60,6 +60,33 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build:all
+        env:
+          # Database Configuration
+          PG_DATABASE_URL: ${{ secrets.PG_DATABASE_URL }}
+          
+          # Authentication
+          ENCRYPTION_SECRET: ${{ secrets.ENCRYPTION_SECRET }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          LOGIN_TOKEN_SECRET: ${{ secrets.LOGIN_TOKEN_SECRET }}
+          
+          # Frontend Configuration
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          
+          # Cache Storage
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          
+          # Supabase Integration
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          
+          # QStash for background jobs
+          QSTASH_TOKEN: ${{ secrets.QSTASH_TOKEN }}
+          QSTASH_CURRENT_SIGNING_KEY: ${{ secrets.QSTASH_CURRENT_SIGNING_KEY }}
+          QSTASH_NEXT_SIGNING_KEY: ${{ secrets.QSTASH_NEXT_SIGNING_KEY }}
+          
+          # Google Calendar Integration
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:

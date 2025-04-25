@@ -1,5 +1,5 @@
 // Re-exporting the applications handler from the twenty-server package
-import handler from '../packages/twenty-server/api/applications';
+import handler from '../packages/twenty-server/dist/api/applications';
 
 // Preserve the original configuration
 export const config = {

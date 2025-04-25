@@ -1,5 +1,5 @@
 // Re-exporting the GraphQL handler from the twenty-server package
-import handler from '../packages/twenty-server/api/graphql';
+import handler from '../packages/twenty-server/dist/api/graphql';
 
 // Preserve the original configuration
 export const config = {
