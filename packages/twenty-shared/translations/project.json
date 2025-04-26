@@ -1,0 +1,40 @@
+{
+    "name": "twenty-shared-translations",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/twenty-shared/translations/src",
+    "projectType": "library",
+    "tags": [
+        "scope:shared"
+    ],
+    "targets": {
+        "build": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "cd packages/twenty-shared/translations && tsc --outDir dist && cp dist/index.js dist/twenty-shared-translations.esm.js && cp dist/index.js dist/twenty-shared-translations.cjs.js"
+            },
+            "outputs": [
+                "{projectRoot}/dist"
+            ]
+        },
+        "lint": {
+            "options": {
+                "lintFilePatterns": [
+                    "{projectRoot}/src/**/*.{ts,tsx,json}",
+                    "{projectRoot}/package.json"
+                ],
+                "reportUnusedDisableDirectives": "error"
+            },
+            "configurations": {
+                "fix": {}
+            }
+        },
+        "fmt": {
+            "options": {
+                "files": "src"
+            },
+            "configurations": {
+                "fix": {}
+            }
+        }
+    }
+}
