@@ -48980,6 +48980,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rimraf@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "rimraf@npm:6.0.1"
+  dependencies:
+    glob: "npm:^11.0.0"
+    package-json-from-dist: "npm:^1.0.0"
+  bin:
+    rimraf: dist/esm/bin.mjs
+  checksum: 10c0/b30b6b072771f0d1e73b4ca5f37bb2944ee09375be9db5f558fcd3310000d29dfcfa93cf7734d75295ad5a7486dc8e40f63089ced1722a664539ffc0c3ece8c6
+  languageName: node
+  linkType: hard
+
 "ripemd160@npm:^2.0.0, ripemd160@npm:^2.0.1":
   version: 2.0.2
   resolution: "ripemd160@npm:2.0.2"
@@ -52913,6 +52925,7 @@ __metadata:
     react-router-dom: "npm:^6.4.4"
     react-tooltip: "npm:^5.13.1"
     recoil: "npm:^0.7.7"
+    rimraf: "npm:^6.0.1"
     tsx: "npm:^4.19.3"
     twenty-shared: "workspace:*"
     vite-plugin-svgr: "npm:^4.3.0"
