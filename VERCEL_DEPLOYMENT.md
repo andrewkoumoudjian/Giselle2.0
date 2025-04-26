@@ -256,6 +256,39 @@ If you see errors like `TS5055: Cannot write file 'index.js' because it would ov
 
 2. Ensure build scripts reference the correct output directory
 
+#### Circular Dependencies
+
+If you encounter build errors like "Could not execute command because the task graph has a circular dependency", check for circular dependencies between your packages:
+
+1. Identify the circular path in your dependency graph:
+   ```
+   twenty-chrome-extension:build → twenty-shared:build → twenty-front:build → twenty-ui:build → twenty-shared:build
+   ```
+
+2. Break the circular dependency by modifying the `dependsOn` in affected project.json files:
+   - Remove `^build` from dependsOn where it creates circular paths
+   - Add explicit command executors instead of relying on implicit dependencies:
+   
+   ```json
+   // packages/twenty-ui/project.json
+   "build": {
+     "executor": "nx:run-commands",
+     "dependsOn": ["generateBarrels"],
+     "options": {
+       "command": "tsc -p tsconfig.json --declaration --declarationDir dist && vite build"
+     }
+   }
+   ```
+
+3. Ensure proper declaration file generation:
+   - Add `--declaration` flag in TypeScript build commands
+   - Specify output directories with `--declarationDir dist`
+   
+4. Visualize your dependency graph with:
+   ```bash
+   npx nx graph
+   ```
+
 ## Monitoring Deployments
 
 After deployment, monitor your application logs in the Vercel dashboard. You can also use tools like Sentry or LogRocket for more detailed monitoring and error tracking.

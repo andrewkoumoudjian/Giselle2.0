@@ -8,10 +8,13 @@
   ],
   "targets": {
     "build": {
+      "executor": "nx:run-commands",
       "dependsOn": [
-        "generateBarrels",
-        "^build"
+        "generateBarrels"
       ],
+      "options": {
+        "command": "tsc -p tsconfig.json --declaration --outDir dist"
+      },
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/constants/package.json",
