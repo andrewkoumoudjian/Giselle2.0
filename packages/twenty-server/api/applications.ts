@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { Handler } from '@vercel/node';
+
 import { IncomingMessage, ServerResponse } from 'http';
 import { parse } from 'url';
+
+import { Handler } from '@vercel/node';
+
 import { AppModule } from '../src/app.module';
 
 // Set max duration for this handler
@@ -14,35 +17,38 @@ let cachedServer: any = null;
 async function bootstrapServer() {
   if (!cachedServer) {
     // Configure environment variables for database connections
-    const databaseUrl = process.env.PG_DATABASE_URL || process.env.POSTGRES_URL ||
+    const databaseUrl =
+      process.env.PG_DATABASE_URL ||
+      process.env.POSTGRES_URL ||
       `postgres://${process.env.POSTGRES_USER || 'postgres'}:${encodeURIComponent(process.env.POSTGRES_PASSWORD || '')}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT || '5432'}/${process.env.POSTGRES_DATABASE}`;
-    
+
     // For Vercel deployments, we need to ensure the right environment variables are available
     process.env.PG_DATABASE_URL = databaseUrl;
     process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-    
+
     // Redis connection - essential for caching in a serverless environment
     if (process.env.REDIS_URL) {
       console.log('Redis configured for caching');
     } else {
       console.warn('No REDIS_URL provided - caching may not work properly');
     }
-    
+
     // Use ephemeral filesystem for temporary files
     process.env.STORAGE_LOCAL_PATH = '/tmp/.local-storage';
-    
-    const app = await NestFactory.create(AppModule, { 
-      logger: ['error', 'warn'] 
+
+    const app = await NestFactory.create(AppModule, {
+      logger: ['error', 'warn'],
     });
-    
+
     app.enableCors({
       origin: process.env.FRONTEND_URL || '*',
       credentials: true,
     });
-    
+
     await app.init();
     cachedServer = app.getHttpAdapter().getInstance();
   }
+
   return cachedServer;
 }
 
@@ -50,6 +56,7 @@ const handler: Handler = async (req: IncomingMessage, res: ServerResponse) => {
   try {
     const server = await bootstrapServer();
     const parsedUrl = parse(req.url || '', true);
+
     server.emit('request', req, res);
   } catch (error) {
     console.error('API handler error:', error);
