@@ -1,3 +1,8 @@
-export default function assertUnreachable(x: never, errorMessage?: string): never {
-  throw new Error(errorMessage ?? "Didn't expect to get here.");
-}
+export const assertUnreachable = (
+  value: never,
+  errorMessage = 'Unreachable case statement',
+): never => {
+  throw new Error(errorMessage);
+};
+
+export default assertUnreachable;

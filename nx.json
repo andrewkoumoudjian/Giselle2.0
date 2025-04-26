@@ -306,17 +306,14 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@vercel/remote-nx",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
           "test",
           "lint",
           "storybook:build"
-        ],
-        "accessToken": "${VERCEL_ACCESS_TOKEN}",
-        "teamId": "${VERCEL_TEAM_ID}",
-        "cacheDirectory": "/tmp/nx-cache"
+        ]
       }
     }
   },
@@ -374,4 +371,3 @@
   },
   "nxCloudAccessToken": "ZGFjMjg0MjItYzkyMC00YTg5LWFiNTEtNjEyNDg4M2M0ZjYzfHJlYWQtd3JpdGU="
 }
-

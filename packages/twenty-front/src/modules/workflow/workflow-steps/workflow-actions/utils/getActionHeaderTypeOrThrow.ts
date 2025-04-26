@@ -1,6 +1,6 @@
 import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
   switch (actionType) {

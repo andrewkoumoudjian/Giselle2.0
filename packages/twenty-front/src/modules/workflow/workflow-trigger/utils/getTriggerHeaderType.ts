@@ -1,6 +1,6 @@
 import { WorkflowTrigger } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getTriggerHeaderType = (trigger: WorkflowTrigger) => {
   switch (trigger.type) {

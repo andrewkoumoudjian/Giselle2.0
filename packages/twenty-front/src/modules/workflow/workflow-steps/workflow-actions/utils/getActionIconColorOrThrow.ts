@@ -1,6 +1,6 @@
 import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { Theme } from '@emotion/react';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getActionIconColorOrThrow = ({
   theme,

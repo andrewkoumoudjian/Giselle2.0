@@ -1,6 +1,6 @@
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
