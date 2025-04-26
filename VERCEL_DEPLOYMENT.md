@@ -174,6 +174,52 @@ If you see errors with the SWC React plugin or @wyw-in-js/vite:
 2. Ensure the plugin configuration in vite.config.ts is correct
 3. Update the resolutions field in package.json to fix conflicts
 
+#### Vite Path Alias Resolution
+
+If you encounter module resolution errors like `Can't resolve '@/ui/...'`:
+
+1. Install the vite-tsconfig-paths plugin:
+   ```
+   yarn add -D vite-tsconfig-paths
+   ```
+
+2. Update your vite.config.ts files to use the plugin:
+   ```typescript
+   import tsconfigPaths from 'vite-tsconfig-paths';
+   import { resolve } from 'path';
+   
+   export default defineConfig({
+     plugins: [
+       // Place this after react() plugin
+       tsconfigPaths(),
+     ],
+     resolve: {
+       alias: {
+         '@': resolve(__dirname, './src'),
+       }
+     },
+   });
+   ```
+
+#### TypeScript rootDir/outDir Overlap Issues
+
+If you see errors like `TS5055: Cannot write file 'index.js' because it would overwrite input file`:
+
+1. Fix your tsconfig.json to properly separate source and output directories:
+   ```json
+   {
+     "compilerOptions": {
+       "rootDir": "src",
+       "outDir": "dist",
+       // other options...
+     },
+     "include": ["src/**/*"],
+     "exclude": ["dist", "node_modules"]
+   }
+   ```
+
+2. Ensure build scripts reference the correct output directory
+
 ## Monitoring Deployments
 
 After deployment, monitor your application logs in the Vercel dashboard. You can also use tools like Sentry or LogRocket for more detailed monitoring and error tracking.

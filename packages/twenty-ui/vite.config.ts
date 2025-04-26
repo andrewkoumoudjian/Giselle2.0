@@ -1,10 +1,11 @@
 /// <reference types='vitest' />
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
-import * as path from 'path';
+import { glob } from 'glob';
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
-import dts, { PluginOptions } from 'vite-plugin-dts';
+import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -12,47 +13,41 @@ import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
 
 import packageJson from './package.json';
 
-const entries = Object.keys(packageJson.exports)
-  .filter((el) => el !== './style.css')
-  .map((module) => `src/${module}/index.ts`);
+const entries = glob.sync(['src/ui/**/*.ts', 'src/ui/**/*.tsx'], {
+  ignore: ['**/*.stories.*', '**/*.test.*', '**/use-*'],
+});
 
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
-  if (!chunk.isEntry) {
-    throw new Error(
-      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
-    return `${chunk.name}.${extension}`;
-  }
-  return `${moduleDirectory}.${extension}`;
+const entryFileNames = (chunk: any, extension: string): string => {
+  const filename = chunk.name.replace('src/', '');
+  return filename + '.' + extension;
 };
 
-export default defineConfig(({ command }) => {
-  const isBuildCommand = command === 'build';
+export default defineConfig(({ mode }) => {
+  const checkersConfig: UserPluginConfig = {};
 
-  const tsConfigPath = isBuildCommand
-    ? path.resolve(__dirname, './tsconfig.lib.json')
-    : path.resolve(__dirname, './tsconfig.dev.json');
+  if (process.env.VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
+    checkersConfig.typescript = {
+      root: './',
+      tsconfigPath: './tsconfig.json',
+    };
+  }
+  if (process.env.VITE_DISABLE_ESLINT_CHECKER !== 'true') {
+    checkersConfig.eslint = {
+      root: './',
+      lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+    };
+  }
 
-  const checkersConfig: UserPluginConfig = {
-    typescript: {
-      tsconfigPath: tsConfigPath,
+  const dtsConfig = {
+    include: ['src'],
+    beforeWriteFile: (filePath, content) => {
+      return {
+        filePath,
+        content: content
+          .replace('import { CSSObject } from "@emotion/react"', '')
+          .replace(/import ".+\.css";/g, ''),
+      };
     },
-  };
-
-  const dtsConfig: PluginOptions = {
-    entryRoot: 'src',
-    tsconfigPath: tsConfigPath,
   };
 
   return {
@@ -71,6 +66,7 @@ export default defineConfig(({ command }) => {
       react({
         jsxImportSource: '@emotion/react',
         plugins: [['@swc/plugin-emotion', {}]],
+        tsDecorators: true,
       }),
       tsconfigPaths({
         projects: ['tsconfig.json'],
@@ -79,43 +75,29 @@ export default defineConfig(({ command }) => {
       dts(dtsConfig),
       checker(checkersConfig),
       wyw({
-        include: [
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Tag.tsx',
-          '**/Avatar.tsx',
-          '**/Chip.tsx',
-          '**/LinkChip.tsx',
-          '**/Avatar.tsx',
-          '**/AvatarChipLeftComponent.tsx',
-          '**/ContactLink.tsx',
-          '**/RoundedLink.tsx',
-        ],
-        babelOptions: {
-          presets: ['@babel/preset-typescript', '@babel/preset-react'],
-        },
+        tsconfig: './tsconfig.json',
       }),
     ],
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+        '@/ui': resolve(__dirname, './src/ui'),
+      }
+    },
 
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
-      cssCodeSplit: false,
-      minify: false,
-      sourcemap: false,
-      outDir: './dist',
-      reportCompressedSize: true,
-      commonjsOptions: {
-        transformMixedEsModules: true,
-        interopDefault: true,
-        defaultIsModuleExports: true,
-        requireReturnsDefault: 'auto',
-      },
+      target: 'es2022',
+      minify: mode === 'production',
+      sourcemap: mode === 'development',
+      emptyOutDir: true,
+      outDir: 'dist',
       lib: {
         entry: ['src/index.ts', ...entries],
         name: 'twenty-ui',
       },
       rollupOptions: {
-        // External packages that should not be bundled into your library.
         external: Object.keys(packageJson.dependencies || {}),
         output: [
           {
@@ -123,6 +105,8 @@ export default defineConfig(({ command }) => {
             globals: {
               react: 'React',
               'react-dom': 'ReactDOM',
+              '@emotion/react': 'emotionReact',
+              '@emotion/styled': 'emotionStyled',
             },
             format: 'es',
             entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
@@ -133,6 +117,8 @@ export default defineConfig(({ command }) => {
             globals: {
               react: 'React',
               'react-dom': 'ReactDOM',
+              '@emotion/react': 'emotionReact',
+              '@emotion/styled': 'emotionStyled',
             },
             interop: 'auto',
             esModule: true,

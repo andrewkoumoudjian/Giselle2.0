@@ -1,17 +1,17 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "es2019",
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["es2015"],
+    "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["esnext"],
-    "outDir": "./lib",
-    "rootDir": "./src",
-    "strict": true,
+    "declaration": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
-  "exclude": [
-    "jest.config.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts"]
 }

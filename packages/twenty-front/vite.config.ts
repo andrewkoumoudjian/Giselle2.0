@@ -4,13 +4,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
-import path from 'path';
+import path, { resolve } from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
+
+const ASSET_URL = process.env.ASSET_URL || '';
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -97,11 +100,10 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       react({
         jsxImportSource: '@emotion/react',
-        plugins: [['@lingui/swc-plugin', {}]],
+        plugins: [['@swc/plugin-emotion', {}]],
       }),
-      tsconfigPaths({
-        projects: ['tsconfig.json'],
-      }),
+      tsconfigPaths(),
+      nodePolyfills(),
       svgr(),
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
@@ -153,6 +155,9 @@ export default defineConfig(({ command, mode }) => {
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
       ],
+      esbuildOptions: {
+        target: 'es2020',
+      },
     },
 
     build: {
@@ -189,10 +194,41 @@ export default defineConfig(({ command, mode }) => {
     },
     resolve: {
       alias: {
+        '@': resolve(__dirname, './src'),
+        '~': resolve(__dirname, './src'),
         path: 'rollup-plugin-node-polyfills/polyfills/path',
         // https://github.com/twentyhq/twenty/pull/10782/files
         // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+      },
+    },
+    base: `${ASSET_URL}/`,
+    server: {
+      port: Number(process.env.PORT) || 3000,
+      host: Boolean(process.env.EXTERNAL) === true ? '0.0.0.0' : 'localhost',
+      fs: {
+        allow: ['..'],
+      },
+      watch: {
+        ignored: ['**/src/generated/**'],
+      },
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/testing/setup-tests.ts',
+      testTimeout: 10000,
+      include: ['src/**/*.test.{js,ts,tsx}'],
+      coverage: {
+        provider: 'istanbul',
+        reporter: ['text', 'lcov'],
+        include: ['src/**/*.{js,jsx,ts,tsx}'],
+        exclude: [
+          'src/**/*.stories.tsx',
+          'src/generated/**',
+          'src/testing/**',
+          'src/pages/auth/__tests__/fixtures/**',
+        ],
       },
     },
   };
