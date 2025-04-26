@@ -10,14 +10,14 @@ import manifest from './src/manifest';
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths({ root: '../../' }), // point to workspace root tsconfig.json
+    tsconfigPaths(), // Use paths from the root tsconfig.base.json
     crx({ manifest }),
   ],
   resolve: {
-    alias: [
-      { find: '@', replacement: resolve(__dirname, '../../') },
-      { find: '@/ui', replacement: resolve(__dirname, '../twenty-ui/src/ui') }
-    ]
+    alias: {
+      '@': resolve(__dirname, '../../'),
+      '@ui': resolve(__dirname, '../twenty-ui/src')
+    }
   },
   build: {
     rollupOptions: {

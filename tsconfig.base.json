@@ -8,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES2020",
     "module": "esnext",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
@@ -17,12 +17,17 @@
     "baseUrl": ".",
     "rootDirs": ["api", "packages"],
     "paths": {
-      "@/*": ["packages/twenty-shared/src/*"],
-      "@twenty-shared/*": ["packages/twenty-shared/src/*"],
-      "@twentyhq/twenty-server/*": ["packages/twenty-server/src/*"]
+      "@ui/*": ["packages/twenty-ui/src/*"],
+      "@/*": ["packages/twenty-front/src/*"],
+      "@server/*": ["packages/twenty-server/src/*"],
+      "@shared/*": ["packages/twenty-shared/src/*"],
+      "@twenty/ui/*": ["packages/twenty-ui/src/*"]
     },
     "esModuleInterop": true,
-    "allowJs": true
+    "allowJs": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx"
   },
   "exclude": ["node_modules", "tmp"]
 }

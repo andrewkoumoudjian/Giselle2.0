@@ -68,9 +68,7 @@ export default defineConfig(({ mode }) => {
         plugins: [['@swc/plugin-emotion', {}]],
         tsDecorators: true,
       }),
-      tsconfigPaths({
-        root: '../../'
-      }),
+      tsconfigPaths(),
       svgr(),
       dts(dtsConfig),
       checker(checkersConfig),
@@ -80,8 +78,8 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        '@': resolve(__dirname, './src'),
-        '@/ui': resolve(__dirname, './src/ui'),
+        '@': resolve(__dirname, '../../'),
+        '@ui': resolve(__dirname, './src')
       }
     },
 

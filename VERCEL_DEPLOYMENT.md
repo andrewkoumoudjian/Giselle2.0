@@ -187,32 +187,55 @@ If you see errors with the SWC React plugin or @wyw-in-js/vite:
 2. Ensure the plugin configuration in vite.config.ts is correct
 3. Update the resolutions field in package.json to fix conflicts
 
-#### Vite Path Alias Resolution
+#### Vite Path Aliases
 
-If you encounter module resolution errors like `Can't resolve '@/ui/...'`:
+If you encounter TypeScript errors related to module resolution (TS2307: Cannot find module '@ui/...'), ensure path aliases are correctly configured:
 
-1. Install the vite-tsconfig-paths plugin:
+1. Verify the root tsconfig.base.json has the proper path mappings:
+   ```json
+   {
+     "compilerOptions": {
+       "baseUrl": ".",
+       "paths": {
+         "@ui/*": ["packages/twenty-ui/src/*"],
+         "@/*": ["packages/twenty-front/src/*"],
+         "@server/*": ["packages/twenty-server/src/*"],
+         "@shared/*": ["packages/twenty-shared/src/*"]
+       }
+     }
+   }
    ```
-   yarn add -D vite-tsconfig-paths
+
+2. Each package's tsconfig.json should extend the base config:
+   ```json
+   {
+     "extends": "../../tsconfig.base.json",
+     "compilerOptions": {
+       "rootDir": "src",
+       "outDir": "dist"
+       // other package-specific options...
+     }
+   }
    ```
 
-2. Update your vite.config.ts files to use the plugin:
-   ```typescript
+3. In Vite configs, ensure tsconfigPaths plugin is properly configured:
+   ```javascript
    import tsconfigPaths from 'vite-tsconfig-paths';
-   import { resolve } from 'path';
    
    export default defineConfig({
      plugins: [
-       // Place this after react() plugin
-       tsconfigPaths(),
+       react(),
+       tsconfigPaths(), // reads paths from tsconfig
      ],
      resolve: {
        alias: {
-         '@': resolve(__dirname, './src'),
+         '@ui': resolve(__dirname, '../twenty-ui/src')
        }
-     },
+     }
    });
    ```
+
+This ensures both TypeScript and Vite correctly resolve module paths.
 
 #### TypeScript rootDir/outDir Overlap Issues
 
