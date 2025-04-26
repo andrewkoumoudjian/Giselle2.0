@@ -1,19 +1,13 @@
-import { DataSource } from 'typeorm';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
-import { deleteFeatureFlags } from 'src/database/typeorm-seeds/core/demo/feature-flags';
-import { deleteUserWorkspaces } from 'src/database/typeorm-seeds/core/demo/user-workspaces';
-import { deleteUsersByWorkspace } from 'src/database/typeorm-seeds/core/demo/users';
-import { deleteWorkspaces } from 'src/database/typeorm-seeds/core/demo/workspaces';
-
-export const deleteCoreSchema = async (
-  workspaceDataSource: DataSource,
-  workspaceId: string,
-) => {
-  const schemaName = 'core';
-
-  await deleteUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
-  await deleteUsersByWorkspace(workspaceDataSource, schemaName, workspaceId);
-  await deleteFeatureFlags(workspaceDataSource, schemaName, workspaceId);
-  // deleteWorkspaces should be last
-  await deleteWorkspaces(workspaceDataSource, schemaName, workspaceId);
-};
+export * from './feature-flags';
+export * from './user-workspaces';
+export * from './users';
+export * from './workspaces';

@@ -1,26 +1,17 @@
-import { BigFloatScalarType } from './big-float.scalar';
-import { BigIntScalarType } from './big-int.scalar';
-import { CursorScalarType } from './cursor.scalar';
-import { DateScalarType } from './date.scalar';
-import { PositionScalarType } from './position.scalar';
-import { RawJSONScalar } from './raw-json.scalar';
-import { TimeScalarType } from './time.scalar';
-import { UUIDScalarType } from './uuid.scalar';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
 export * from './big-float.scalar';
 export * from './big-int.scalar';
 export * from './cursor.scalar';
 export * from './date.scalar';
+export * from './position.scalar';
+export * from './raw-json.scalar';
 export * from './time.scalar';
 export * from './uuid.scalar';
-
-export const scalars = [
-  BigFloatScalarType,
-  BigIntScalarType,
-  DateScalarType,
-  TimeScalarType,
-  UUIDScalarType,
-  CursorScalarType,
-  PositionScalarType,
-  RawJSONScalar,
-];

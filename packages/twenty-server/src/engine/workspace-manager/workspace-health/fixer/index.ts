@@ -1,12 +1,14 @@
-import { WorkspaceMissingColumnFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-missing-column.fixer';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
-import { WorkspaceNullableFixer } from './workspace-nullable.fixer';
-import { WorkspaceDefaultValueFixer } from './workspace-default-value.fixer';
-import { WorkspaceTypeFixer } from './workspace-type.fixer';
-
-export const workspaceFixers = [
-  WorkspaceNullableFixer,
-  WorkspaceDefaultValueFixer,
-  WorkspaceTypeFixer,
-  WorkspaceMissingColumnFixer,
-];
+export * from './abstract-workspace.fixer';
+export * from './workspace-default-value.fixer';
+export * from './workspace-missing-column.fixer';
+export * from './workspace-nullable.fixer';
+export * from './workspace-type.fixer';

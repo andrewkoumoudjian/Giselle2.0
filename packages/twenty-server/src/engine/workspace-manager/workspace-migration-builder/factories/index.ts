@@ -1,14 +1,14 @@
-import { WorkspaceMigrationIndexFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-index.factory';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
-import { WorkspaceMigrationFieldRelationFactory } from './workspace-migration-field-relation.factory';
-import { WorkspaceMigrationFieldFactory } from './workspace-migration-field.factory';
-import { WorkspaceMigrationObjectFactory } from './workspace-migration-object.factory';
-import { WorkspaceMigrationRelationFactory } from './workspace-migration-relation.factory';
-
-export const workspaceMigrationBuilderFactories = [
-  WorkspaceMigrationObjectFactory,
-  WorkspaceMigrationFieldFactory,
-  WorkspaceMigrationFieldRelationFactory,
-  WorkspaceMigrationRelationFactory,
-  WorkspaceMigrationIndexFactory,
-];
+export * from './workspace-migration-field-relation.factory';
+export * from './workspace-migration-field.factory';
+export * from './workspace-migration-index.factory';
+export * from './workspace-migration-object.factory';
+export * from './workspace-migration-relation.factory';

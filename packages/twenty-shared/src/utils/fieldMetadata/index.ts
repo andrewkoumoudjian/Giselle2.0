@@ -3,8 +3,8 @@
  *|_   _|_      _____ _ __ | |_ _   _
  *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
  *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
- *  |_|   \_/\_/ \___|_| |_|\__|\___, |
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
  *                              |___/
  */
 
-export { default as isFieldMetadataDateKind } from './isFieldMetadataDateKind';
+export * from './isFieldMetadataDateKind';

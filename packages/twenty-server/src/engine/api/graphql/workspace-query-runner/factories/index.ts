@@ -1,8 +1,12 @@
-import { QueryRunnerArgsFactory } from './query-runner-args.factory';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
-import { QueryResultGettersFactory } from './query-result-getters/query-result-getters.factory';
-
-export const workspaceQueryRunnerFactories = [
-  QueryRunnerArgsFactory,
-  QueryResultGettersFactory,
-];
+export * from './query-runner-args.factory';
+export * from './__tests__';
+export * from './query-result-getters';

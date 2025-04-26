@@ -1,14 +1,16 @@
-import { WorkspaceFieldRelationComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field-relation.comparator';
-import { WorkspaceIndexComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-index.comparator';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
-import { WorkspaceFieldComparator } from './workspace-field.comparator';
-import { WorkspaceObjectComparator } from './workspace-object.comparator';
-import { WorkspaceRelationComparator } from './workspace-relation.comparator';
-
-export const workspaceSyncMetadataComparators = [
-  WorkspaceFieldComparator,
-  WorkspaceFieldRelationComparator,
-  WorkspaceObjectComparator,
-  WorkspaceRelationComparator,
-  WorkspaceIndexComparator,
-];
+export * from './workspace-field-relation.comparator';
+export * from './workspace-field.comparator';
+export * from './workspace-index.comparator';
+export * from './workspace-object.comparator';
+export * from './workspace-relation.comparator';
+export * from './__tests__';
+export * from './utils';

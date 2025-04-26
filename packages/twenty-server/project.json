@@ -7,7 +7,7 @@
   ],
   "targets": {
     "build": {
-      "executor": "@nx/node:build",
+      "executor": "@nx/js:tsc",
       "cache": true,
       "options": {
         "outputPath": "dist/packages/twenty-server",

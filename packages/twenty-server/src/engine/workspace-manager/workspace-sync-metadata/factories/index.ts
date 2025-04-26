@@ -1,14 +1,14 @@
-import { StandardIndexFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-index.factory';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
+ *  |_|   \_/\_/ \___|_| |_|\__|\___,|
+ *                              |___/
+ */
 
-import { StandardFieldRelationFactory } from './standard-field-relation.factory';
-import { StandardFieldFactory } from './standard-field.factory';
-import { StandardObjectFactory } from './standard-object.factory';
-import { StandardRelationFactory } from './standard-relation.factory';
-
-export const workspaceSyncMetadataFactories = [
-  StandardFieldFactory,
-  StandardObjectFactory,
-  StandardRelationFactory,
-  StandardFieldRelationFactory,
-  StandardIndexFactory,
-];
+export * from './standard-field-relation.factory';
+export * from './standard-field.factory';
+export * from './standard-index.factory';
+export * from './standard-object.factory';
+export * from './standard-relation.factory';
