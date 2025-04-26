@@ -14,7 +14,7 @@ let cachedServer: any = null;
 async function bootstrapServer() {
   if (!cachedServer) {
     // Configure environment variables for database connections
-    const databaseUrl = process.env.PG_DATABASE_URL || 
+    const databaseUrl = process.env.PG_DATABASE_URL || process.env.POSTGRES_URL ||
       `postgres://${process.env.POSTGRES_USER || 'postgres'}:${encodeURIComponent(process.env.POSTGRES_PASSWORD || '')}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT || '5432'}/${process.env.POSTGRES_DATABASE}`;
     
     // For Vercel deployments, we need to ensure the right environment variables are available

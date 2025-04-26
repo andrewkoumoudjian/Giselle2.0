@@ -404,7 +404,7 @@
     "build:emails": "nx build twenty-emails",
     "build:utils": "tsc -b packages/twenty-utils",
     "build:all": "nx run-many -t build --all && yarn copy-api-handlers",
-    "copy-api-handlers": "mkdir -p api && cp -f packages/twenty-server/dist/api/*.js api/ || true",
+    "copy-api-handlers": "mkdir -p api && cp -f dist/packages/twenty-server/api/*.js api/ || true",
     "generate:barrels": "node scripts/generate-barrels.js",
     "prebuild": "yarn generate:barrels",
     "dev": "yarn workspace twenty-server start:dev"

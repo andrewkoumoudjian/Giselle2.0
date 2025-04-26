@@ -69,8 +69,8 @@ export default defineConfig(({ mode }) => {
         tsDecorators: true,
         // Disable SWC's TypeScript checking as we're using vite-plugin-dts
         typescript: {
-          skipTypeCheck: true
-        }
+          skipTypeCheck: true,
+        },
       }),
       tsconfigPaths(),
       svgr(),
@@ -83,8 +83,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': resolve(__dirname, '../../'),
-        '@ui': resolve(__dirname, './src')
-      }
+        '@ui': resolve(__dirname, './src'),
+      },
     },
 
     // Configuration for building your library.
