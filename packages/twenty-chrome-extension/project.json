@@ -9,7 +9,10 @@
       "options": {
         "outputPath": "{projectRoot}/dist"
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "twenty-shared:build",
+        "twenty-ui:build"
+      ]
     },
     "start": {
       "executor": "nx:run-commands",

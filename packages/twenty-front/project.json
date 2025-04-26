@@ -9,14 +9,20 @@
       "options": {
         "outputPath": "{projectRoot}/build"
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "twenty-shared:build",
+        "twenty-ui:build"
+      ]
     },
     "build:sourcemaps": {
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/build"
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "twenty-shared:build",
+        "twenty-ui:build"
+      ]
     },
     "serve": {
       "executor": "nx:run-commands",

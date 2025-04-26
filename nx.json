@@ -312,11 +312,15 @@
           "build",
           "test",
           "lint",
-          "storybook:build"
+          "storybook:build",
+          "generateBarrels"
         ],
         "cacheDirectory": "/tmp/nx-cache",
         "accessToken": "${NX_VERCEL_REMOTE_CACHE_TOKEN}",
-        "teamId": "${NX_VERCEL_REMOTE_CACHE_TEAM}"
+        "teamId": "${NX_VERCEL_REMOTE_CACHE_TEAM}",
+        "ttl": {
+          "generateBarrels": 3600
+        }
       }
     }
   },

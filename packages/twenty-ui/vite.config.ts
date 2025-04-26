@@ -67,6 +67,10 @@ export default defineConfig(({ mode }) => {
         jsxImportSource: '@emotion/react',
         plugins: [['@swc/plugin-emotion', {}]],
         tsDecorators: true,
+        // Disable SWC's TypeScript checking as we're using vite-plugin-dts
+        typescript: {
+          skipTypeCheck: true
+        }
       }),
       tsconfigPaths(),
       svgr(),

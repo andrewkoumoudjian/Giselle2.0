@@ -196,6 +196,7 @@ export default defineConfig(({ command, mode }) => {
       alias: {
         '@': resolve(__dirname, './src'),
         '~': resolve(__dirname, './src'),
+        '@ui': resolve(__dirname, '../twenty-ui/src'),
         path: 'rollup-plugin-node-polyfills/polyfills/path',
         // https://github.com/twentyhq/twenty/pull/10782/files
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
