@@ -1,127 +1,186 @@
-# Vercel Deployment Guide
+# Deploying Twenty on Vercel
 
-This guide covers the deployment of the Twenty application on Vercel.
+This guide provides step-by-step instructions for successfully deploying Twenty on Vercel.
 
-## Project Configuration
+## Prerequisites
 
-We've optimized the project for Vercel deployment with the following changes:
+- A Vercel account
+- A GitHub account with the Twenty codebase
+- Node.js 20.x installed locally (for testing)
+- Yarn 4.x installed locally (for testing)
 
-### Node.js Version
+## Fixed Issues for Vercel Deployment
 
-The project is configured to use Node.js 18.x:
-- .nvmrc file specifies 18.17.1
-- package.json "engines" field sets "node": "18.x"
-- vercel.json specifies "runtime": "nodejs18.x"
+### 1. assertUnreachable Export Fix
 
-### Yarn Configuration
+The `assertUnreachable` function in the twenty-shared package is now correctly exported as both a named export and a default export:
 
-To ensure compatibility with Vercel serverless functions:
-- We use Yarn 4 with the node_modules linker mode
-- `.yarnrc.yml` includes `nodeLinker: "node-modules"` to disable Plug'n'Play mode for better Vercel compatibility
+```typescript
+// packages/twenty-shared/src/utils/assertUnreachable.ts
+export const assertUnreachable = (
+  value: never,
+  errorMessage = 'Unreachable case statement',
+): never => {
+  throw new Error(errorMessage);
+};
 
-### Vercel Configuration
+export default assertUnreachable;
+```
 
-In `vercel.json`, we've configured:
+### 2. Yarn Configuration
+
+The project uses Yarn's node-modules linker instead of Plug'n'Play for better compatibility:
+
+```yaml
+# .yarnrc.yml
+nodeLinker: "node-modules"
+```
+
+### 3. Vercel Build Optimization
+
+A proper vercel.json file is included with configuration for serverless functions:
 
 ```json
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "buildCommand": "yarn build:all",
   "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs18.x",
-      "memory": 1024,
-      "maxDuration": 10
-    },
-    "packages/twenty-server/api/*.ts": {
-      "runtime": "nodejs18.x",
+    "api/**/*.js": {
       "memory": 1024,
       "maxDuration": 10
     }
   },
-  "regions": ["iad1"],
-  "cleanUrls": true
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*.js"
+    }
+  ],
+  "cleanUrls": true,
+  "regions": [
+    "iad1"
+  ]
 }
 ```
 
-### API Routes
+### 4. Dependency Resolution
 
-API routes are defined in:
-- `api/applications.ts` - Re-exports the handler from `packages/twenty-server/api/applications.ts`
-- `api/graphql.ts` - Re-exports the handler from `packages/twenty-server/api/graphql.ts`
+Dependency conflicts are resolved via the resolutions field in package.json:
 
-## Environment Variables
+```json
+"resolutions": {
+  "graphql": "16.8.0",
+  "type-fest": "4.10.1",
+  "typescript": "5.3.3",
+  "prosemirror-model": "1.23.0",
+  "yjs": "13.6.18",
+  "graphql-redis-subscriptions/ioredis": "^5.6.0",
+  "@nestjs/common": "10.4.17",
+  "@nestjs/core": "10.4.17",
+  "reflect-metadata": "^0.2.2",
+  "typeorm": "^0.3.17",
+  "@emotion/react": "^11.11.1",
+  "@emotion/styled": "^11.11.0"
+}
+```
 
-Required environment variables for Vercel:
+## Deployment Setup
+
+### 1. Initial Vercel Setup
+
+1. Create a new project in Vercel
+2. Select your GitHub repository containing the Twenty codebase
+3. Configure the following build settings:
+   - Build Command: `yarn build:all`
+   - Output Directory: `packages/twenty-front/dist`
+   - Install Command: `yarn install`
+   - Node.js Version: 20.x
+
+### 2. Environment Variables
+
+Set up the following environment variables in Vercel:
 
 ```
-# Database
-PG_DATABASE_URL=
-POSTGRES_HOST=
-POSTGRES_PORT=5432
-POSTGRES_DB=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-
-# Redis (for caching)
-REDIS_URL=
-
-# Frontend URL for CORS
-FRONTEND_URL=
+# Database Connection
+PG_DATABASE_URL=postgres://user:password@host:5432/dbname
 
 # Authentication
-ENCRYPTION_SECRET=
-ACCESS_TOKEN_SECRET=
-LOGIN_TOKEN_SECRET=
+ENCRYPTION_SECRET=your-encryption-secret
+ACCESS_TOKEN_SECRET=your-access-token-secret
+LOGIN_TOKEN_SECRET=your-login-token-secret
 
-# For OAuth integrations
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+# Frontend Configuration
+FRONTEND_URL=https://your-frontend-url.com
 
-# Messaging
-MESSAGING_PROVIDER=
+# Cache Storage
+REDIS_URL=redis://username:password@host:port
 
-# Supabase (if using)
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-
-# For CI/CD
-VERCEL_TOKEN=
-VERCEL_ORG_ID=
-VERCEL_PROJECT_ID=
-SUPABASE_PROJECT_REF=
-SUPABASE_ACCESS_TOKEN=
+# Nx Cache (optional but recommended)
+NX_VERCEL_REMOTE_CACHE_TOKEN=your-nx-cache-token
+NX_VERCEL_REMOTE_CACHE_TEAM=your-vercel-team-id
 ```
 
-## GitHub Actions Deployment
+### 3. Remote Caching (Optional but Recommended)
 
-We've added a GitHub Actions workflow for automated deployments:
-- Runs on push to main/giselle2.5 branches
-- Lints and tests the code
-- Applies Supabase migrations
-- Builds and deploys to Vercel
+To enable remote caching for faster builds:
+
+1. Install the Vercel Nx plugin if not already installed:
+   ```
+   yarn add -D @vercel/remote-nx
+   ```
+
+2. Update nx.json with the remote cache configuration:
+   ```json
+   "tasksRunnerOptions": {
+     "default": {
+       "runner": "@vercel/remote-nx",
+       "options": {
+         "cacheableOperations": [
+           "build",
+           "test",
+           "lint",
+           "storybook:build"
+         ],
+         "cacheDirectory": ".nx/cache",
+         "accessToken": "${NX_VERCEL_REMOTE_CACHE_TOKEN}",
+         "teamId": "${NX_VERCEL_REMOTE_CACHE_TEAM}"
+       }
+     }
+   }
+   ```
 
 ## Troubleshooting
 
-If you encounter issues with the build:
+### Common Issues and Solutions
 
-1. **Duplicate exports**: Check barrel files for duplicate exports (e.g., in `packages/twenty-shared/src/utils/index.ts`)
-2. **Dependency mismatches**: Ensure NestJS packages are all on compatible versions (v10.x)
-3. **Memory limits**: Increase memory allocation in vercel.json if builds fail due to memory constraints
+#### Missing exports in assertUnreachable.ts
 
-## Local Testing
+If you see errors related to assertUnreachable not being exported:
+1. Ensure both named and default exports exist in the file
+2. Check that index.ts correctly re-exports the function
 
-To verify your build locally before deploying:
+#### Nx Cache Errors
 
-```bash
-# Install Vercel CLI
-npm i -g vercel
+If you see "Cannot read properties of undefined (reading 'cacheError')":
+1. Try resetting the cache: `npx nx reset`
+2. Ensure environment variables for remote caching are set
+3. Temporarily revert to the default runner if needed
 
-# Login to your Vercel account
-vercel login
+#### SWC/Vite Plugin Errors
 
-# Run a local build test
-vercel build
-```
+If you see errors with the SWC React plugin or @wyw-in-js/vite:
+1. Check that all necessary peer dependencies are installed
+2. Ensure the plugin configuration in vite.config.ts is correct
+3. Update the resolutions field in package.json to fix conflicts
 
-For more details, see [Vercel Serverless Functions documentation](https://vercel.com/docs/functions/serverless-functions).
+## Monitoring Deployments
+
+After deployment, monitor your application logs in the Vercel dashboard. You can also use tools like Sentry or LogRocket for more detailed monitoring and error tracking.
+
+## Future Improvements
+
+- Consider upgrading to Nx 21+ when released
+- Implement proper error logging with Sentry
+- Set up automatic database migrations on deploy
+- Configure proper CI/CD with GitHub Actions
