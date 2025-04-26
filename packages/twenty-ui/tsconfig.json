@@ -1,33 +1,26 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "declaration": true,
+    "declarationDir": "dist",
+    "composite": true,
+    "incremental": false,
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "moduleResolution": "node",
     "jsx": "react-jsx",
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noEmit": true,
-    "types": ["node"],
-    "outDir": "../../.cache/tsc",
     "paths": {
-      "@ui/*": ["./src/*"],
-      "@assets/*": ["./src/assets/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.dev.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "./tsconfig.storybook.json"
-    }
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.stories.tsx", "**/*.test.tsx", "**/*.spec.tsx", "node_modules"]
 }

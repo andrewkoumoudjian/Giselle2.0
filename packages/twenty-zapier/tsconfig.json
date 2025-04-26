@@ -1,17 +1,18 @@
 {
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
+    "outDir": "lib",
     "lib": ["es2015"],
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
+    "declarationDir": "lib",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts"]
+  "exclude": ["lib", "node_modules", "**/*.test.ts"]
 }

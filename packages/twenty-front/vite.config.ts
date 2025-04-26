@@ -102,7 +102,9 @@ export default defineConfig(({ command, mode }) => {
         jsxImportSource: '@emotion/react',
         plugins: [['@swc/plugin-emotion', {}]],
       }),
-      tsconfigPaths(),
+      tsconfigPaths({
+        root: '../../'
+      }),
       nodePolyfills(),
       svgr(),
       lingui({

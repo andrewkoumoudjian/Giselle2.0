@@ -69,7 +69,7 @@ export default defineConfig(({ mode }) => {
         tsDecorators: true,
       }),
       tsconfigPaths({
-        projects: ['tsconfig.json'],
+        root: '../../'
       }),
       svgr(),
       dts(dtsConfig),
