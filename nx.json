@@ -306,7 +306,7 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "${NX_VERCEL_REMOTE_CACHE:-nx/tasks-runners/default}",
+      "runner": "@vercel/remote-nx",
       "options": {
         "cacheableOperations": [
           "build",
@@ -314,7 +314,7 @@
           "lint",
           "storybook:build"
         ],
-        "cacheDirectory": ".nx/cache",
+        "cacheDirectory": "/tmp/nx-cache",
         "accessToken": "${NX_VERCEL_REMOTE_CACHE_TOKEN}",
         "teamId": "${NX_VERCEL_REMOTE_CACHE_TEAM}"
       }

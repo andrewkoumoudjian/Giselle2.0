@@ -142,12 +142,25 @@ To enable remote caching for faster builds:
            "lint",
            "storybook:build"
          ],
-         "cacheDirectory": ".nx/cache",
+         "cacheDirectory": "/tmp/nx-cache",
          "accessToken": "${NX_VERCEL_REMOTE_CACHE_TOKEN}",
          "teamId": "${NX_VERCEL_REMOTE_CACHE_TEAM}"
        }
      }
    }
+   ```
+
+3. Set up required environment variables in Vercel:
+   - NX_VERCEL_REMOTE_CACHE_TOKEN: Your Vercel access token
+   - NX_VERCEL_REMOTE_CACHE_TEAM: Your Vercel team ID (if applicable)
+
+4. Create a `.vercel/plugins.json` file in your repository:
+   ```json
+   [
+     {
+       "name": "@vercel/remote-nx"
+     }
+   ]
    ```
 
 ## Troubleshooting
