@@ -25,8 +25,5 @@
       "NX_VERBOSITY": "verbose",
       "NX_REMOTE_CACHE": "true"
     }
-  },
-  "plugins": [
-    "@vercel/remote-nx"
-  ]
+  }
 }
