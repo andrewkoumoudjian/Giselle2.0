@@ -403,8 +403,9 @@
     "build:server": "nx build twenty-server",
     "build:emails": "nx build twenty-emails",
     "build:utils": "tsc -b packages/twenty-utils",
-    "build:all": "nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers",
+    "build:all": "nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers && yarn copy-frontend",
     "copy-api-handlers": "mkdir -p api && cp -f dist/packages/twenty-server/api/*.js api/ || true",
+    "copy-frontend": "mkdir -p public && cp -R dist/packages/twenty-front/* public/ || true",
     "generate:barrels": "node scripts/generate-barrels.js",
     "prebuild": "yarn generate:barrels",
     "dev": "yarn workspace twenty-server start:dev"
