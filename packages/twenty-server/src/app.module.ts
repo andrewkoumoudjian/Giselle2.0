@@ -27,6 +27,7 @@ import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware'
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
+import { ServerlessJobsModule } from 'src/serverless-jobs/serverless-jobs.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
@@ -67,6 +68,8 @@ const MIGRATED_REST_METHODS = [
     WorkspaceMetadataCacheModule,
     // I18n module for translations
     I18nModule,
+    // Serverless job processing
+    ServerlessJobsModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
