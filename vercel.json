@@ -17,5 +17,16 @@
   "cleanUrls": true,
   "regions": [
     "iad1"
+  ],
+  "build": {
+    "env": {
+      "NX_BRANCH": "git branch --show-current",
+      "NX_CLI": "nx",
+      "NX_VERBOSITY": "verbose",
+      "NX_REMOTE_CACHE": "true"
+    }
+  },
+  "plugins": [
+    "@vercel/remote-nx"
   ]
 }
