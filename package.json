@@ -395,20 +395,21 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "debug-registry": "npm config get registry && npm view drizzle-orm version",
-    "vercel-build": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && nx build twenty-front",
+    "vercel-build": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && nx build twenty-front --runner=@vercel/remote-nx",
     "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
     "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
-    "build:ui": "nx build twenty-ui",
-    "build:front": "nx build twenty-front",
-    "build:server": "nx build twenty-server",
-    "build:emails": "nx build twenty-emails",
+    "build:ui": "nx build twenty-ui --runner=@vercel/remote-nx",
+    "build:front": "nx build twenty-front --runner=@vercel/remote-nx",
+    "build:server": "nx build twenty-server --runner=@vercel/remote-nx",
+    "build:emails": "nx build twenty-emails --runner=@vercel/remote-nx",
     "build:utils": "tsc -b packages/twenty-utils",
     "build:all": "nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers && yarn copy-frontend",
     "copy-api-handlers": "mkdir -p api && cp -f dist/packages/twenty-server/api/*.js api/ || true",
     "copy-frontend": "mkdir -p public && cp -R dist/packages/twenty-front/* public/ || true",
     "generate:barrels": "node scripts/generate-barrels.js",
     "prebuild": "yarn generate:barrels",
-    "dev": "yarn workspace twenty-server start:dev"
+    "dev": "yarn workspace twenty-server start:dev",
+    "preinstall": "yarn cache clean --all && rm -rf \"$(yarn config get globalFolder)/metadata/npm\""
   },
   "preconstruct": {
     "packages": [

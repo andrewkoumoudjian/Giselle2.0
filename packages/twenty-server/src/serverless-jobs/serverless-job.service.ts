@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
+
 import * as crypto from 'crypto';
+
+import axios from 'axios';
 
 /**
  * Service for managing background jobs in a serverless environment
@@ -19,13 +21,17 @@ export class ServerlessJobService {
   constructor(private readonly configService: ConfigService) {
     this.qstashToken = this.configService.get<string>('QSTASH_TOKEN');
     this.frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    this.currentSigningKey = this.configService.get<string>('QSTASH_CURRENT_SIGNING_KEY');
-    this.nextSigningKey = this.configService.get<string>('QSTASH_NEXT_SIGNING_KEY');
+    this.currentSigningKey = this.configService.get<string>(
+      'QSTASH_CURRENT_SIGNING_KEY',
+    );
+    this.nextSigningKey = this.configService.get<string>(
+      'QSTASH_NEXT_SIGNING_KEY',
+    );
   }
 
   /**
    * Enqueues a job to be processed asynchronously via QStash
-   * 
+   *
    * @param jobType The type of job to process
    * @param payload The data needed to process the job
    * @param options Optional settings like delay
@@ -43,59 +49,56 @@ export class ServerlessJobService {
       this.logger.warn(
         'QStash token not configured. Jobs will not be enqueued in production.',
       );
-      
+
       if (process.env.NODE_ENV === 'development') {
         this.logger.debug(
           `[DEV] Would have enqueued job: ${jobType} with payload:`,
           payload,
         );
+
         return { messageId: `dev-${Date.now()}`, success: true };
       }
-      
+
       throw new Error('QStash token not configured');
     }
 
     try {
       // Construct the target URL for the job runner API route
       const targetUrl = `${this.frontendUrl}/api/job-runner`;
-      
+
       // Prepare the data to send to QStash
       const jobData = {
         jobType,
         payload,
       };
-      
+
       // Prepare the request headers
       const headers = {
-        'Authorization': `Bearer ${this.qstashToken}`,
+        Authorization: `Bearer ${this.qstashToken}`,
         'Content-Type': 'application/json',
       };
-      
+
       // Add optional QStash parameters
       if (options?.delay) {
         headers['Upstash-Delay'] = String(options.delay);
       }
-      
+
       if (options?.deduplicationId) {
         headers['Upstash-Deduplication-Id'] = options.deduplicationId;
       }
-      
+
       // Send the job to QStash
-      const response = await axios.post(
-        this.qstashUrl,
-        jobData,
-        {
-          headers,
-          params: {
-            url: targetUrl,
-          },
+      const response = await axios.post(this.qstashUrl, jobData, {
+        headers,
+        params: {
+          url: targetUrl,
         },
-      );
-      
+      });
+
       this.logger.debug(
         `Successfully enqueued job ${jobType} with ID: ${response.data.messageId}`,
       );
-      
+
       return response.data;
     } catch (error) {
       this.logger.error(
@@ -108,7 +111,7 @@ export class ServerlessJobService {
 
   /**
    * Schedules a job to run at a specific time
-   * 
+   *
    * @param jobType The type of job to process
    * @param payload The data needed to process the job
    * @param scheduledTime The ISO string time when the job should execute
@@ -126,27 +129,30 @@ export class ServerlessJobService {
       0,
       Math.floor((scheduled.getTime() - now.getTime()) / 1000),
     );
-    
+
     return this.enqueueJob(jobType, payload, { delay: delaySeconds });
   }
 
   /**
    * Verify that a request actually came from QStash
-   * 
+   *
    * @param signature The signature from the Upstash-Signature header
    * @param body The raw request body as a string
    * @returns boolean indicating whether the signature is valid
    */
   verifySignature(signature: string, body: string): boolean {
     if (!this.currentSigningKey) {
-      this.logger.warn('QStash signing key not configured, skipping verification');
+      this.logger.warn(
+        'QStash signing key not configured, skipping verification',
+      );
+
       return process.env.NODE_ENV === 'development';
     }
 
     try {
       // Parse the signature header
       const parsedSignature = this.parseSignatureHeader(signature);
-      
+
       // Verify using current signing key
       const isValidWithCurrentKey = this.verifyWithKey(
         parsedSignature.signature,
@@ -154,11 +160,11 @@ export class ServerlessJobService {
         body,
         this.currentSigningKey,
       );
-      
+
       if (isValidWithCurrentKey) {
         return true;
       }
-      
+
       // Try with next signing key if available
       if (this.nextSigningKey) {
         return this.verifyWithKey(
@@ -168,10 +174,11 @@ export class ServerlessJobService {
           this.nextSigningKey,
         );
       }
-      
+
       return false;
     } catch (error) {
       this.logger.error('Error verifying QStash signature:', error.message);
+
       return false;
     }
   }
@@ -183,11 +190,11 @@ export class ServerlessJobService {
     const [signaturePart, timestampPart] = header.split(',');
     const signature = signaturePart.split('=')[1];
     const timestamp = timestampPart.split('=')[1];
-    
+
     if (!signature || !timestamp) {
       throw new Error('Invalid QStash signature header format');
     }
-    
+
     return { signature, timestamp };
   }
 
@@ -203,7 +210,7 @@ export class ServerlessJobService {
     const hmac = crypto.createHmac('sha256', key);
     const data = timestamp + body;
     const expectedSignature = hmac.update(data).digest('base64');
-    
+
     return signature === expectedSignature;
   }
 }

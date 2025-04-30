@@ -29,5 +29,9 @@
       "NX_VERBOSITY": "verbose",
       "NX_REMOTE_CACHE": "true"
     }
+  },
+  "remoteCache": {
+    "enabled": true,
+    "runner": "@vercel/remote-nx"
   }
 }
