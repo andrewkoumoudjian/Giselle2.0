@@ -8,12 +8,12 @@ This guide provides instructions for deploying the Giselle 2.5 Nx monorepo to Ve
 
 - A Vercel account
 - Node.js 20.x (as specified in `.nvmrc`)
-- Yarn 3.6.4 (downgraded automatically during build)
+- Yarn 4.4.0 (configured automatically during build)
 
 ### Key Files
 
 1. **vercel.json**: Configures the Vercel deployment with proper builds and rewrites
-2. **downgrade-yarn.js**: Ensures Yarn 3.6.4 is used to avoid resolution issues
+2. **setup-yarn.js**: Ensures Yarn 4.4.0 is used for package management
 3. **fix-nx-plugins.js**: Installs required Nx plugins at the correct version
 4. **ensure-translations-build.js**: Guarantees the shared translations package builds correctly
 5. **vercel-build-script.js**: Handles the build process for Vercel deployment
@@ -26,7 +26,7 @@ If you encounter an error about missing module `/vercel/path0/node_modules/twent
 
 ### Yarn Resolution Errors
 
-If you see Yarn resolution errors (YN0082), the `downgrade-yarn.js` script will downgrade Yarn to version 3.6.4, which should resolve these issues.
+If you see Yarn resolution errors (YN0082), the `setup-yarn.js` script ensures that Yarn 4.4.0 is properly configured, which should resolve these issues.
 
 ### Nx Plugin Issues
 

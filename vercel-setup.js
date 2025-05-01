@@ -6,13 +6,13 @@ const path = require('path');
 
 console.log('🔧 Setting up Vercel deployment environment...');
 
-// Set up Yarn 3.6.4
+// Set up Yarn 4.4.0
 try {
-  console.log('Setting up Yarn 3.6.4...');
-  execSync('node setup-yarn-3.6.4.js', { stdio: 'inherit' });
-  console.log('✅ Yarn 3.6.4 setup completed');
+  console.log('Setting up Yarn 4.4.0...');
+  execSync('node setup-yarn.js', { stdio: 'inherit' });
+  console.log('✅ Yarn 4.4.0 setup completed');
 } catch (error) {
-  console.error('❌ Error setting up Yarn 3.6.4:', error);
+  console.error('❌ Error setting up Yarn 4.4.0:', error);
   process.exit(1);
 }
 
@@ -23,7 +23,7 @@ try {
   // Create or update .yarnrc.yml
   const yarnrcPath = path.join(process.cwd(), '.yarnrc.yml');
   const yarnrcContent = `
-yarnPath: ".yarn/releases/yarn-3.6.4.cjs"
+yarnPath: ".yarn/releases/yarn-4.4.0.cjs"
 enableImmutableInstalls: false
 npmRegistryServer: "https://registry.npmjs.org"
 nodeLinker: "node-modules"

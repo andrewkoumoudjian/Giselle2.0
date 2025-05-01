@@ -375,7 +375,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty",
-  "packageManager": "yarn@3.6.4",
+  "packageManager": "yarn@4.4.0",
   "resolutions": {
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
@@ -413,7 +413,7 @@
     "build:server": "nx build twenty-server --runner=@vercel/remote-nx",
     "build:emails": "nx build twenty-emails --runner=@vercel/remote-nx",
     "build:utils": "tsc -b packages/twenty-utils",
-    "build:all": "node setup-yarn-3.6.4.js && yarn install && node fix-nx-plugins.js && node ensure-translations-build.js && nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers && yarn copy-frontend",
+    "build:all": "yarn install && node fix-nx-plugins.js && node ensure-translations-build.js && nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers && yarn copy-frontend",
     "copy-api-handlers": "mkdir -p api && cp -f dist/packages/twenty-server/api/*.js api/ || true",
     "copy-frontend": "mkdir -p public && cp -R dist/packages/twenty-front/* public/ || true",
     "generate:barrels": "node scripts/generate-barrels.js",

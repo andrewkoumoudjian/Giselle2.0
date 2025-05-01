@@ -4,42 +4,54 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔧 Setting up Yarn 3.6.4...');
+// Default to Yarn 4.4.0, but allow specifying a different version
+const targetYarnVersion = process.env.YARN_VERSION || '4.4.0';
+
+console.log(`🔧 Setting up Yarn ${targetYarnVersion}...`);
 
 try {
-  // Download Yarn 3.6.4
-  console.log('Downloading Yarn 3.6.4...');
-  
   // Create .yarn/releases directory if it doesn't exist
   const releasesDir = path.join(process.cwd(), '.yarn/releases');
   if (!fs.existsSync(releasesDir)) {
     fs.mkdirSync(releasesDir, { recursive: true });
   }
   
-  // Download Yarn 3.6.4
-  const yarnPath = path.join(releasesDir, 'yarn-3.6.4.cjs');
+  // Check for target Yarn version
+  const yarnPath = path.join(releasesDir, `yarn-${targetYarnVersion}.cjs`);
   if (!fs.existsSync(yarnPath)) {
-    console.log('Downloading Yarn 3.6.4...');
-    execSync('curl -o .yarn/releases/yarn-3.6.4.cjs -L https://github.com/yarnpkg/berry/releases/download/3.6.4/yarn-3.6.4.cjs', { stdio: 'inherit' });
+    console.log(`Downloading Yarn ${targetYarnVersion}...`);
+    execSync(`curl -o .yarn/releases/yarn-${targetYarnVersion}.cjs -L https://github.com/yarnpkg/berry/releases/download/${targetYarnVersion}/yarn-${targetYarnVersion}.cjs`, { stdio: 'inherit' });
+    
+    // Update .yarnrc.yml to point to the correct version
+    const yarnrcPath = path.join(process.cwd(), '.yarnrc.yml');
+    if (fs.existsSync(yarnrcPath)) {
+      let yarnrcContent = fs.readFileSync(yarnrcPath, 'utf8');
+      yarnrcContent = yarnrcContent.replace(/yarnPath:.*/, `yarnPath: ".yarn/releases/yarn-${targetYarnVersion}.cjs"`);
+      fs.writeFileSync(yarnrcPath, yarnrcContent);
+      console.log(`Updated .yarnrc.yml to use Yarn ${targetYarnVersion}`);
+    } else {
+      fs.writeFileSync(yarnrcPath, `yarnPath: ".yarn/releases/yarn-${targetYarnVersion}.cjs"\n`);
+      console.log(`Created .yarnrc.yml with Yarn ${targetYarnVersion} configuration`);
+    }
   } else {
-    console.log('Yarn 3.6.4 already downloaded');
+    console.log(`Yarn ${targetYarnVersion} already downloaded`);
   }
   
   // Update packageManager field in package.json
   const packageJsonPath = path.join(process.cwd(), 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   
-  if (packageJson.packageManager !== 'yarn@3.6.4') {
+  if (packageJson.packageManager !== `yarn@${targetYarnVersion}`) {
     const oldPackageManager = packageJson.packageManager;
-    packageJson.packageManager = 'yarn@3.6.4';
+    packageJson.packageManager = `yarn@${targetYarnVersion}`;
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
-    console.log(`Updated packageManager from "${oldPackageManager}" to "yarn@3.6.4" in package.json`);
+    console.log(`Updated packageManager from "${oldPackageManager}" to "yarn@${targetYarnVersion}" in package.json`);
   } else {
-    console.log('packageManager already set to yarn@3.6.4 in package.json');
+    console.log(`packageManager already set to yarn@${targetYarnVersion} in package.json`);
   }
   
-  console.log('✅ Yarn 3.6.4 setup completed successfully');
+  console.log(`✅ Yarn ${targetYarnVersion} setup completed successfully`);
 } catch (error) {
-  console.error('❌ Error setting up Yarn 3.6.4:', error);
+  console.error(`❌ Error setting up Yarn ${targetYarnVersion}:`, error);
   process.exit(1);
 }
