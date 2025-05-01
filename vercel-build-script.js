@@ -34,8 +34,21 @@ try {
   const yarnVersion = execSync('yarn --version', { encoding: 'utf8' }).trim();
   console.log(`Detected Yarn version: ${yarnVersion}`);
   
-  // If packages are missing from lockfile, try rebuilding it
+  // Handle Yarn 4.x specifically
   if (yarnVersion.startsWith('4.')) {
+    console.log('Yarn 4.x detected, running specialized Yarn 4 preparation...');
+    if (fs.existsSync('./vercel-prepare-yarn.js')) {
+      runCommand('node vercel-prepare-yarn.js');
+    } else {
+      console.log('No vercel-prepare-yarn.js found, falling back to standard install');
+      runCommand('yarn install');
+    }
+    
+    // Always run fix-nx-plugins.js to ensure NX plugins are installed
+    runCommand('node fix-nx-plugins.js');
+  } 
+  // If packages are missing from lockfile, try rebuilding it (for older Yarn versions)
+  else {
     console.log('Running yarn install to ensure lockfile is up to date...');
     try {
       // First, fix any resolutions
