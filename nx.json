@@ -222,7 +222,7 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nx/tasks-runner/default",
+      "runner": "@vercel/remote-nx",
       "options": {
         "cacheableOperations": [
           "build",
@@ -234,9 +234,6 @@
         "cacheDirectory": "/tmp/nx-cache",
         "accessToken": "${NX_VERCEL_REMOTE_CACHE_TOKEN}",
         "teamId": "${NX_VERCEL_REMOTE_CACHE_TEAM}",
-        "remoteCache": {
-          "url": "${NX_CACHE_URL}"
-        },
         "ttl": {
           "generateBarrels": 3600
         }
