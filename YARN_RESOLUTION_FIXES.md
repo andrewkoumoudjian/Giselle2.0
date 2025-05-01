@@ -18,14 +18,22 @@ This document explains the fixes implemented to resolve Yarn resolution and lock
 
 ## Changes Made
 
-1. **Enhanced preinstall Script**
+1. **Downgraded Yarn to Version 3.6.4**
 
-   Updated the `preinstall` script in root package.json to:
-   - Clear Yarn's cache with `yarn cache clean --all`
-   - Remove Yarn's npm metadata cache with `rm -rf "$(yarn config get globalFolder)/metadata/npm"`
-   - This forces Yarn to fetch fresh registry data, which helps resolve the "No candidates found" error
+   Created a `downgrade-yarn.js` script that:
+   - Sets Yarn version to 3.6.4 using `yarn set version 3.6.4`
+   - Updates the `packageManager` field in package.json to "yarn@3.6.4"
+   - This addresses the known bug in Yarn 4.x that causes the "No candidates found" error
 
-2. **Enhanced fix-nx-plugins.js Script**
+2. **Updated vercel-build Script**
+
+   Modified the `vercel-build` script in package.json to:
+   - Run the `downgrade-yarn.js` script first
+   - Run `yarn install` to regenerate the lockfile with Yarn 3.6.4
+   - Then proceed with the rest of the build process
+   - This ensures that Yarn 3.6.4 is used for all dependency resolution
+
+3. **Enhanced fix-nx-plugins.js Script**
 
    Enhanced the `fix-nx-plugins.js` script to:
    - Detect the Nx version from package.json
@@ -33,26 +41,35 @@ This document explains the fixes implemented to resolve Yarn resolution and lock
    - Fall back to direct npm installation if needed
    - This ensures the plugin is available at the correct version
 
-3. **Aligned Node.js Versions**
+4. **Aligned Node.js Versions**
 
    Updated Node.js version specifications in all package.json files to consistently use "20.x":
    - Root package.json already had "node": "20.x"
    - Updated packages/twenty-server/package.json from "^18.17.1" to "20.x"
    - Updated packages/twenty-emails/package.json from "^18.17.1" to "20.x"
    - Updated packages/twenty-shared/package.json from "^18.17.1" to "20.x"
+   - Updated packages/twenty-front/package.json from "22.x" to "20.x"
    - This ensures consistency with Vercel's Node.js runtime and prevents cache invalidation
+
+5. **Updated Yarn Version References**
+
+   Updated all references to Yarn version in package.json files to use "^3.6.4" instead of "^4.0.2" to maintain consistency.
 
 ## How This Fixes the Issue
 
-1. **Metadata Cache Clearing**
+1. **Yarn Version Downgrade**
 
-   Clearing Yarn's npm metadata cache forces Yarn to fetch fresh registry data, which helps resolve the "No candidates found" error.
+   Downgrading to Yarn 3.6.4 sidesteps the known bug in Yarn 4.x that causes the "No candidates found" error. This is a recommended workaround in the Yarn community.
 
-2. **Nx Plugin Alignment**
+2. **Lockfile Regeneration**
+
+   Running `yarn install` with Yarn 3.6.4 regenerates the lockfile with the correct dependency resolutions, addressing the "This package doesn't seem to be present in your lockfile" error.
+
+3. **Nx Plugin Alignment**
 
    Using `nx add @nx/js` ensures that the plugin version matches the Nx core version, preventing version mismatches.
 
-3. **Node.js Version Consistency**
+4. **Node.js Version Consistency**
 
    By aligning all Node.js version specifications to "20.x", we ensure that Vercel uses the same Node.js version for all parts of the build process, preventing cache invalidation and version-related issues.
 

@@ -20,19 +20,46 @@ try {
   console.log(`📊 Using default Nx version: ${nxVersion}`);
 }
 
-try {
-  // First try to use nx add to install the plugin
-  console.log(`📦 Installing @nx/js using nx add...`);
-  try {
-    execSync(`npx nx add @nx/js`, { stdio: 'inherit' });
-    console.log(`✅ Successfully installed @nx/js using nx add`);
-  } catch (e) {
-    console.warn(`⚠️ Could not install using nx add: ${e.message}`);
+// List of required Nx plugins
+const requiredPlugins = [
+  '@nx/js',
+  '@nx/eslint',
+  '@nx/eslint-plugin',
+  '@nx/jest',
+  '@nx/node',
+  '@nx/react',
+  '@nx/vite',
+  '@nx/web'
+];
 
-    // Fallback to direct npm install
-    console.log(`📦 Falling back to direct install of @nx/js@${nxVersion}...`);
-    execSync(`npm install @nx/js@${nxVersion} --no-save`, { stdio: 'inherit' });
-    console.log(`✅ Successfully installed @nx/js@${nxVersion} using npm`);
+// Function to install a plugin
+const installPlugin = (plugin) => {
+  console.log(`📦 Installing ${plugin}...`);
+  try {
+    // First try to use nx add
+    execSync(`npx nx add ${plugin}`, { stdio: 'inherit' });
+    console.log(`✅ Successfully installed ${plugin} using nx add`);
+    return true;
+  } catch (e) {
+    console.warn(`⚠️ Could not install ${plugin} using nx add: ${e.message}`);
+
+    try {
+      // Fallback to direct npm install
+      console.log(`📦 Falling back to direct install of ${plugin}@${nxVersion}...`);
+      execSync(`npm install ${plugin}@${nxVersion} --no-save`, { stdio: 'inherit' });
+      console.log(`✅ Successfully installed ${plugin}@${nxVersion} using npm`);
+      return true;
+    } catch (npmError) {
+      console.error(`❌ Failed to install ${plugin}: ${npmError.message}`);
+      return false;
+    }
+  }
+};
+
+try {
+  // Install all required plugins
+  for (const plugin of requiredPlugins) {
+    installPlugin(plugin);
   }
 
   console.log('✅ Nx plugins fix completed successfully');

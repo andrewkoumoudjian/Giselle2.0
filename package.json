@@ -375,7 +375,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@3.6.4",
   "resolutions": {
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
@@ -405,7 +405,7 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "debug-registry": "npm config get registry && npm view drizzle-orm version",
-    "vercel-build": "yarn fix-nx-plugins && yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && npx nx build twenty-front",
+    "vercel-build": "node downgrade-yarn.js && yarn install && yarn fix-nx-plugins && node ensure-translations-build.js && node vercel-build-script.js",
     "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
     "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
     "build:ui": "nx build twenty-ui --runner=@vercel/remote-nx",

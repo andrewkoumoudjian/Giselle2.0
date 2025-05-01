@@ -14,9 +14,9 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "engines": {
-    "node": "22.x",
+    "node": "20.x",
     "npm": "please-use-yarn",
-    "yarn": "^4.0.2"
+    "yarn": "^3.6.4"
   },
   "browserslist": {
     "production": [
