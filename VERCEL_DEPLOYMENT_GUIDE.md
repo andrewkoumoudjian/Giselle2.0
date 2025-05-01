@@ -11,7 +11,7 @@ This guide provides instructions for deploying the Giselle 2.5 Nx monorepo to Ve
 ## Key Files for Vercel Deployment
 
 1. **vercel.json**: Configures the Vercel deployment with proper functions and rewrites
-2. **vercel-setup.js**: Sets up the Vercel deployment environment, including downgrading Yarn
+2. **setup-yarn-3.6.4.js**: Sets up Yarn 3.6.4 to avoid resolution issues
 3. **fix-nx-plugins.js**: Installs required Nx plugins at the correct version
 4. **ensure-translations-build.js**: Guarantees the shared translations package builds correctly
 
