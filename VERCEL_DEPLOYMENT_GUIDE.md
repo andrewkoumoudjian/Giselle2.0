@@ -43,8 +43,11 @@ The deployment is configured to work with Vercel's build system:
    - Uses `@vercel/node` for the API functions
    - Specifies the output directory for the frontend as `dist/packages/twenty-front`
    - Embeds function configuration (memory and timeout) directly in the build entry
-   - Sets up routes for API and frontend
-   - Follows Vercel's schema requirements by avoiding the use of both `builds` and `functions` at the top level
+   - Uses `rewrites` instead of `routes` for API and frontend routing
+   - Maintains `cleanUrls` for extensionless URLs
+   - Follows Vercel's schema requirements by:
+     - Avoiding the use of both `builds` and `functions` at the top level
+     - Using `rewrites` instead of `routes` which is not compatible with other configuration options
 
 2. **Custom Build Script**:
    - `build-for-vercel.sh` creates simplified versions of required files

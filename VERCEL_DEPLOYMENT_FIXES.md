@@ -38,29 +38,44 @@ This document summarizes the changes made to fix Vercel deployment issues.
 
    Updated `vercel.json` to use Vercel's build system properly, following Vercel's schema requirements:
    ```json
-   "builds": [
-     {
-       "src": "packages/twenty-front/package.json",
-       "use": "@vercel/static-build",
-       "config": {
-         "distDir": "dist/packages/twenty-front"
+   {
+     "builds": [
+       {
+         "src": "packages/twenty-front/package.json",
+         "use": "@vercel/static-build",
+         "config": {
+           "distDir": "dist/packages/twenty-front"
+         }
+       },
+       {
+         "src": "api/**/*.js",
+         "use": "@vercel/node",
+         "config": {
+           "memory": 1024,
+           "maxDuration": 10
+         }
        }
-     },
-     {
-       "src": "api/**/*.js",
-       "use": "@vercel/node",
-       "config": {
-         "memory": 1024,
-         "maxDuration": 10
+     ],
+     "rewrites": [
+       {
+         "source": "/api/:path*",
+         "destination": "/api/:path*.js"
+       },
+       {
+         "source": "/:path*",
+         "destination": "/index.html"
        }
-     }
-   ]
+     ],
+     "cleanUrls": true
+   }
    ```
 
    This configuration:
    - Uses `@vercel/static-build` for the frontend
    - Uses `@vercel/node` for the API functions
    - Embeds function configuration directly in the build entry
+   - Uses `rewrites` instead of `routes` to comply with Vercel's schema
+   - Maintains `cleanUrls` for extensionless URLs
    - Avoids using the top-level `functions` block which is not compatible with the `builds` array
 
 3. **Frontend Package Configuration**
