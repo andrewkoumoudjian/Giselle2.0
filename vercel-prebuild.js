@@ -27,30 +27,48 @@ try {
     if (packageJson.workspaces) {
       console.log('📦 Detected monorepo with workspaces - adjusting configuration...');
       
-      // Create a simple .yarnrc.yml to ensure workspaces are properly handled
+      // Create a .yarnrc.yml directly instead of using yarn config
+      // This ensures proper YAML formatting with quoted special characters
       const yarnrcPath = path.join(process.cwd(), '.yarnrc.yml');
-      const yarnrcContent = `
-nodeLinker: node-modules
+      const yarnrcContent = `nodeLinker: node-modules
 npmRegistryServer: "https://registry.npmjs.org/"
 enableTelemetry: false
 enableGlobalCache: false
+enableImmutableInstalls: false
 compressionLevel: 0
 
 packageExtensions:
-  webpack-hot-middleware@*:
+  "webpack-hot-middleware@*":
     peerDependencies:
       webpack: "*"
-  @nx/js@*:
+  "@nx/js@*":
     dependencies:
       nx: "22.10.2"
+  "@nx/react@*":
+    dependencies:
+      "@nx/js": "22.10.2"
+  "@nx/eslint@*":
+    dependencies:
+      "@nx/js": "22.10.2"
+  "@nx/jest@*":
+    dependencies:
+      "@nx/js": "22.10.2"
+  "@nx/web@*":
+    dependencies:
+      "@nx/js": "22.10.2"
 `;
+      
       fs.writeFileSync(yarnrcPath, yarnrcContent);
       console.log('✅ Created .yarnrc.yml with workspace configuration');
       
-      // Configure workspace settings
-      execSync('yarn config set enableWorkspaces true', { stdio: 'inherit' });
-      execSync('yarn config set nmMode hardlinks-local', { stdio: 'inherit' });
-      console.log('✅ Configured Yarn workspace settings');
+      // Configure workspace settings using individual commands to avoid YAML issues
+      try {
+        execSync('yarn config set enableWorkspaces true', { stdio: 'pipe' });
+        execSync('yarn config set nmMode hardlinks-local', { stdio: 'pipe' });
+        console.log('✅ Configured Yarn workspace settings');
+      } catch (settingsError) {
+        console.warn(`⚠️ Failed to configure settings, but continuing with .yarnrc.yml file`);
+      }
       
       // Fix for workspace references in package.json
       for (const workspace of Object.keys(packageJson.dependencies || {})) {

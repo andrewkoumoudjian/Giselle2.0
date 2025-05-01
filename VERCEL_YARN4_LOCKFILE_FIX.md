@@ -18,6 +18,14 @@ And with workspace packages in a monorepo:
 Internal Error: twenty@workspace:.: This package doesn't seem to be present in your lockfile; run "yarn install" to update the lockfile
 ```
 
+Also, we encountered YAML parsing errors:
+
+```
+YAMLException: bad indentation of a mapping entry at line 12, column 3:
+      @nx/js@*:
+      ^
+```
+
 These errors occur because:
 
 1. Yarn 4.4.0 is more strict about lockfile integrity than earlier versions
@@ -26,87 +34,73 @@ These errors occur because:
 4. Temporary directory limitations on Vercel can prevent certain workarounds
 5. Yarn workspace packages require special handling in Vercel's deployment environment
 6. Monorepo structures with internal package references don't work out-of-the-box on Vercel
+7. YAML indentation and quoting rules are strictly enforced in Yarn 4.4.0
 
 ## Our Solution
 
 We implemented a multi-stage approach to fix these issues:
 
-### 1. Custom Pre-Build Script (`vercel-prebuild.js`)
+### 1. Properly Formatted .yarnrc.yml File
 
-This script runs before the build process and:
-- Disables immutable installs (`enableImmutableInstalls: false`)
-- Detects and configures workspace settings when needed
-- Fixes workspace:* references with concrete versions (0.0.0)
-- Runs a specialized lockfile fix script
-- Handles lockfile regeneration when necessary
-- Provides fallback build methods if dependencies fail
+Create a valid YAML configuration file with:
+- Properly indented entries (2 spaces per level)
+- Quoted keys that contain special characters like @ and *
+- Explicit settings for workspaces and node modules
 
-### 2. Lockfile Fix Script (`vercel-lockfile-fix.js`)
+### 2. Simplified Vercel Configuration 
 
-This script:
-- Creates a temporary project with only the NX dependencies
-- Generates a clean lockfile for these dependencies
-- Replaces the main lockfile with this clean version
-- Installs NX packages individually as dependencies
-
-### 3. Monorepo Workspace Resolution Fix
-
-For monorepo workspace packages, the script:
-- Creates a proper `.yarnrc.yml` configuration file with necessary settings
-- Enables workspace features in Yarn
-- Sets the proper node module mode for Vercel
-- Replaces workspace protocol references with fixed versions
-- Ensures NX core package is directly available
-- Forcefully regenerates the lockfile if workspace resolution fails
-
-### 4. Updated Vercel Configuration (`vercel.json`)
-
-We configured Vercel to:
-- Use our custom pre-build script for installing dependencies
-- Provide a fallback build command if the main build fails
+Update vercel.json to use a simplified approach:
+- Use standard build command with fallbacks
+- Avoid custom installation commands that might generate invalid YAML
 - Maintain the same server configuration (API functions, memory, etc.)
 
-## Key Files
+### 3. Manual Package Resolution
 
-- `vercel-prebuild.js`: Main dependency preparation script
-- `vercel-lockfile-fix.js`: Specialized script for fixing NX package resolution
-- `vercel.json`: Updated Vercel configuration
+For monorepo workspace packages:
+- Replace workspace: protocol references with fixed versions
+- Create an explicit packageExtensions section in .yarnrc.yml
+- Ensure NX core package is directly available
 
-## How It Works
+## Key Fixes
 
-1. **Vercel starts the build** and runs our `installCommand`
-2. **Pre-build script** configures Yarn and detects monorepo workspace structure
-3. **Workspace configuration** is applied for monorepo projects
-   - Converts workspace:* references to fixed versions
-   - Creates proper .yarnrc.yml configuration
-   - Ensures NX is available as direct dependency
-4. **Lockfile fix** creates a temporary project to properly resolve NX packages
-5. **Lockfile regeneration** occurs if initial installation fails
-6. **Main project** adopts the clean lockfile and installs dependencies
-7. **Build process** runs with properly resolved dependencies
+1. **YAML Indentation and Quoting**: Ensure all YAML files use consistent 2-space indentation and properly quote keys with special characters like `@nx/js@*`.
+
+2. **Direct File Creation**: Instead of using `yarn config set` which can generate improperly formatted YAML, directly create .yarnrc.yml with proper formatting.
+
+3. **Workspace Protocol Handling**: Replace `workspace:*` references in package.json with fixed versions to ensure compatibility with Vercel's environment.
+
+## Example .yarnrc.yml
+
+```yaml
+nodeLinker: node-modules
+npmRegistryServer: "https://registry.npmjs.org/"
+enableTelemetry: false
+enableGlobalCache: false
+enableImmutableInstalls: false
+compressionLevel: 0
+
+packageExtensions:
+  "webpack-hot-middleware@*":
+    peerDependencies:
+      webpack: "*"
+  "@nx/js@*":
+    dependencies:
+      nx: "22.10.2"
+  "@nx/react@*":
+    dependencies:
+      "@nx/js": "22.10.2"
+```
 
 ## Troubleshooting
 
 If deployment still fails:
 
-1. Check Vercel logs for specific error messages
-2. For workspace errors, try adding a `.yarnrc.yml` file to your repository with:
-   ```yml
-   nodeLinker: node-modules
-   npmRegistryServer: "https://registry.npmjs.org/"
-   enableWorkspaces: true
-   nmMode: hardlinks-local
-   compressionLevel: 0
-   
-   packageExtensions:
-     @nx/js@*:
-       dependencies:
-         nx: "22.10.2"
-   ```
-3. For monorepo workspace issues, consider temporarily replacing workspace:* references in package.json with fixed versions for deployment
-4. Verify that all required NX packages are listed in our fix script
-5. For persistent workspace issues, try setting `packageManager: yarn@3.6.4` in `package.json` to use an older, more stable Yarn version
-6. Try manually updating lockfile locally and pushing to the repository
+1. Check Vercel logs for specific YAML syntax errors
+2. Ensure all keys with special characters in .yarnrc.yml are properly quoted (use double quotes)
+3. Validate YAML formatting with consistent 2-space indentation
+4. For monorepo workspace issues, consider replacing workspace:* references with fixed versions
+5. Verify that all required NX packages are listed in the packageExtensions section
+6. Consider using a YAML validator to check syntax before deployment
 
 ## References
 
@@ -115,4 +109,5 @@ If deployment still fails:
 - [NX Troubleshooting Guide](https://nx.dev/troubleshooting/troubleshoot-nx-install-issues)
 - [Vercel Build Errors Community Discussion](https://community.redwoodjs.com/t/yarn-install-error-while-deploying-to-vercel/5910)
 - [Yarn Workspaces in Nx](https://nx.dev/recipes/monorepo/yarn-workspaces)
-- [GitHub Issue: NX Build Fails on Ubuntu](https://github.com/nrwl/nx/issues/10696) 
+- [GitHub Issue: NX Build Fails on Ubuntu](https://github.com/nrwl/nx/issues/10696)
+- [YAML Syntax Guide](https://stackoverflow.com/questions/30642317/how-to-automatically-re-indent-a-yaml-file) 

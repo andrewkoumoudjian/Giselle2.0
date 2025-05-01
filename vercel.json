@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "node vercel-prebuild.js",
   "buildCommand": "yarn build:all || yarn build:safe",
   "outputDirectory": "public",
   "functions": {
