@@ -48,32 +48,55 @@ This guide provides instructions for deploying the Giselle 2.5 Nx monorepo to Ve
 
 ## How This Deployment Works
 
+The deployment process follows these steps:
+
+1. **Setup Environment**
+   - Downgrade Yarn to 3.6.4 to avoid resolution issues
+   - Configure Yarn to use node-modules linker
+   - Install required Nx plugins
+   - Run yarn install to update the lockfile
+
+2. **Build Shared Packages**
+   - Build twenty-shared-translations
+   - Build twenty-shared
+   - Build twenty-ui
+
+3. **Build All Projects**
+   - Use Nx to build all projects
+   - Copy API handlers to the api directory
+   - Copy frontend files to the public directory
+
+4. **Vercel Deployment**
+   - Serve static files from the public directory
+   - Serve API functions from the api directory
+   - Use rewrites to route requests appropriately
+
 The deployment is configured to work with Vercel's build system:
 
 1. **vercel.json Configuration**:
-   - Uses `@vercel/static-build` for the frontend
-   - Uses `@vercel/node` for the API functions
-   - Specifies the output directory for the frontend as `dist/packages/twenty-front`
-   - Embeds function configuration (memory and timeout) directly in the build entry
-   - Uses `rewrites` instead of `routes` for API and frontend routing
+   - Uses functions for the API endpoints
+   - Specifies the build command as `yarn build:all`
+   - Specifies the output directory as `public`
+   - Uses `rewrites` for API and frontend routing
    - Maintains `cleanUrls` for extensionless URLs
-   - Follows Vercel's schema requirements by:
-     - Avoiding the use of both `builds` and `functions` at the top level
-     - Using `rewrites` instead of `routes` which is not compatible with other configuration options
-
-2. **Custom Build Script**:
-   - `build-for-vercel.sh` creates simplified versions of required files
-   - Creates the necessary directory structure for Vercel to find the frontend and API files
 
 ## Troubleshooting
 
 ### Missing Module Error
 
-If you encounter an error about missing module `/vercel/path0/node_modules/twenty-shared/translations/dist/twenty-shared-translations.cjs.js`, it means the build process didn't correctly generate the required files. The custom build script (`build-for-vercel.sh`) in this repository should fix this issue by creating simplified versions of the required files.
+If you encounter an error about missing module `/vercel/path0/node_modules/twenty-shared/translations/dist/twenty-shared-translations.cjs.js`, the `ensure-translations-build.js` script should fix this by creating the required files.
+
+### Yarn Resolution Errors
+
+If you see Yarn resolution errors (YN0082), the `vercel-setup.js` script will downgrade Yarn to version 3.6.4, which should resolve these issues.
+
+### Nx Plugin Issues
+
+If you encounter errors related to missing Nx plugins, the `fix-nx-plugins.js` script will install the required plugins at the correct version.
 
 ### "No Output Directory named dist" Error
 
-If you see this error, it means Vercel couldn't find the frontend files. Make sure the `vercel.json` file is correctly configured with the `builds` section that specifies the output directory as `dist/packages/twenty-front`.
+If you see this error, it means Vercel couldn't find the frontend files. Make sure the `vercel.json` file is correctly configured with the `outputDirectory` set to `public`.
 
 ### Node.js Version Issues
 
@@ -81,8 +104,27 @@ This project requires Node.js version 20.x. Make sure the `NODE_VERSION` environ
 
 ### Memory Issues During Build
 
-If you encounter memory issues during the build process, the custom build script (`build-for-vercel.sh`) should help by creating simplified versions of the required files without running the full build process.
+If you encounter memory issues during the build process, you can increase the memory limit for the API functions in the `vercel.json` file.
+
+## Local Testing
+
+To test the build process locally before deploying to Vercel:
+
+```bash
+# Install dependencies
+yarn install
+
+# Run the build process
+yarn build:all
+
+# Test the build locally
+npx vercel dev
+```
 
 ## Maintenance
 
 After deployment, you can update your project by pushing changes to your GitHub repository. Vercel will automatically rebuild and redeploy your project.
+
+## Monitoring
+
+After deployment, monitor your application logs in the Vercel dashboard for any issues.
