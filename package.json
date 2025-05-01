@@ -419,7 +419,7 @@
     "generate:barrels": "node scripts/generate-barrels.js",
     "prebuild": "yarn generate:barrels",
     "dev": "yarn workspace twenty-server start:dev",
-    "preinstall": "node vercel-build-helper.js",
+    "preinstall": "yarn cache clean --all && rm -rf \"$(yarn config get globalFolder)/metadata/npm\" && node vercel-build-helper.js",
     "fix-nx-plugins": "node fix-nx-plugins.js"
   },
   "preconstruct": {

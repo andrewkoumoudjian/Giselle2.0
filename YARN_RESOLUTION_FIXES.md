@@ -12,26 +12,35 @@ This document explains the fixes implemented to resolve Yarn resolution and lock
 
    The follow-on error `Internal Error: @nx/js@npm:22.10.2: This package doesn't seem to be present in your lockfile` confirmed that the lockfile wasn't updated with a valid plugin version.
 
+3. **Node.js Version Inconsistency**
+
+   There were inconsistencies in Node.js version specifications across different package.json files in the project, which could lead to cache invalidation and build errors.
+
 ## Changes Made
 
-1. **Enhanced vercel-build-helper.js**
+1. **Enhanced preinstall Script**
 
-   The existing `vercel-build-helper.js` script was enhanced to:
-   - Clean Yarn's npm metadata cache to avoid "No candidates found" errors
-   - Check for the availability of all required Nx plugins at the correct version
-   - Set up the npm registry correctly
+   Updated the `preinstall` script in root package.json to:
+   - Clear Yarn's cache with `yarn cache clean --all`
+   - Remove Yarn's npm metadata cache with `rm -rf "$(yarn config get globalFolder)/metadata/npm"`
+   - This forces Yarn to fetch fresh registry data, which helps resolve the "No candidates found" error
 
-2. **Added fix-nx-plugins.js**
+2. **Enhanced fix-nx-plugins.js Script**
 
-   Created a new script `fix-nx-plugins.js` that:
-   - Installs the @nx/js plugin at the correct version (22.10.2) using npm
-   - This ensures the plugin is available during the build process
+   Enhanced the `fix-nx-plugins.js` script to:
+   - Detect the Nx version from package.json
+   - Try to install @nx/js using `nx add @nx/js` first (which automatically aligns versions)
+   - Fall back to direct npm installation if needed
+   - This ensures the plugin is available at the correct version
 
-3. **Updated package.json Scripts**
+3. **Aligned Node.js Versions**
 
-   - Simplified the `preinstall` script to just run the enhanced `vercel-build-helper.js`
-   - Added a new `fix-nx-plugins` script to run the fix-nx-plugins.js
-   - Updated the `vercel-build` script to run the fix-nx-plugins script before building
+   Updated Node.js version specifications in all package.json files to consistently use "20.x":
+   - Root package.json already had "node": "20.x"
+   - Updated packages/twenty-server/package.json from "^18.17.1" to "20.x"
+   - Updated packages/twenty-emails/package.json from "^18.17.1" to "20.x"
+   - Updated packages/twenty-shared/package.json from "^18.17.1" to "20.x"
+   - This ensures consistency with Vercel's Node.js runtime and prevents cache invalidation
 
 ## How This Fixes the Issue
 
@@ -39,13 +48,13 @@ This document explains the fixes implemented to resolve Yarn resolution and lock
 
    Clearing Yarn's npm metadata cache forces Yarn to fetch fresh registry data, which helps resolve the "No candidates found" error.
 
-2. **Direct Plugin Installation**
+2. **Nx Plugin Alignment**
 
-   By directly installing the @nx/js plugin using npm before the build process, we ensure that the plugin is available at the correct version.
+   Using `nx add @nx/js` ensures that the plugin version matches the Nx core version, preventing version mismatches.
 
-3. **Registry Configuration**
+3. **Node.js Version Consistency**
 
-   Setting the npm registry to https://registry.npmjs.org/ ensures that Yarn can find the correct packages.
+   By aligning all Node.js version specifications to "20.x", we ensure that Vercel uses the same Node.js version for all parts of the build process, preventing cache invalidation and version-related issues.
 
 ## Verifying the Fix
 
