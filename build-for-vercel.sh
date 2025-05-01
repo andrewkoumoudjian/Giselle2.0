@@ -35,9 +35,16 @@ cp dist/index.js dist/index.mjs
 cp dist/index.js dist/index.cjs
 cd ../..
 
-# Create the public directory for the frontend
-echo "Creating public directory..."
-mkdir -p public
+# Create the API directory for the backend
+echo "Creating API directory..."
+mkdir -p api
+echo 'module.exports = (req, res) => {
+  res.status(200).json({ message: "API is working!" });
+};' > api/index.js
+
+# Create the frontend build directory structure
+echo "Creating frontend build directory structure..."
+mkdir -p dist/packages/twenty-front
 echo '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,13 +60,6 @@ echo '<!DOCTYPE html>
 <body>
   <div id="root">Loading...</div>
 </body>
-</html>' > public/index.html
-
-# Create the API directory for the backend
-echo "Creating API directory..."
-mkdir -p api
-echo 'module.exports = (req, res) => {
-  res.status(200).json({ message: "API is working!" });
-};' > api/index.js
+</html>' > dist/packages/twenty-front/index.html
 
 echo "Build completed successfully!"
