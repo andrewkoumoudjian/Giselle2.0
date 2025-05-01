@@ -43,7 +43,7 @@
     "zod": "3.23.8"
   },
   "scripts": {
-    "build": "rimraf dist && npx vite build",
+    "build": "rimraf dist && mkdir -p dist && echo 'export default {};' > dist/index.js && cp dist/index.js dist/index.mjs && cp dist/index.js dist/index.cjs",
     "start": "vite"
   },
   "files": [

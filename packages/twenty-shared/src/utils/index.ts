@@ -11,7 +11,8 @@ export { assertUnreachable } from './assertUnreachable';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
-  getLogoUrlFromDomainName, sanitizeURL
+  sanitizeURL,
+  getLogoUrlFromDomainName,
 } from './image/getLogoUrlFromDomainName';
 export { capitalize } from './strings/capitalize';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
@@ -22,4 +23,3 @@ export { isValidUrl } from './url/isValidUrl';
 export { isDefined } from './validation/isDefined';
 export { isValidLocale } from './validation/isValidLocale';
 export { isValidUuid } from './validation/isValidUuid';
-

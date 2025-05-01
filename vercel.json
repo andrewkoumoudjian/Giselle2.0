@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "yarn build:all",
+  "buildCommand": "./build-for-vercel.sh",
   "functions": {
     "api/**/*.js": {
       "memory": 1024,

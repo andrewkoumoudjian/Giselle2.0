@@ -405,7 +405,7 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "debug-registry": "npm config get registry && npm view drizzle-orm version",
-    "vercel-build": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && nx build twenty-front --runner=@vercel/remote-nx",
+    "vercel-build": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && npx nx build twenty-front",
     "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
     "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
     "build:ui": "nx build twenty-ui --runner=@vercel/remote-nx",
