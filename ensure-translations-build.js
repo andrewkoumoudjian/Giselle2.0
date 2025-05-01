@@ -19,8 +19,20 @@ if (!fs.existsSync(distDir)) {
 // Try to build normally first
 try {
   console.log('Attempting normal build...');
-  execSync('yarn workspace twenty-shared-translations build', { stdio: 'inherit' });
-  console.log('✅ Normal build succeeded');
+  try {
+    execSync('yarn workspace twenty-shared-translations build', { stdio: 'inherit' });
+    console.log('✅ Normal build succeeded');
+  } catch (workspaceError) {
+    console.warn(`⚠️ Workspace build failed: ${workspaceError.message}`);
+    console.log('Trying direct build...');
+
+    // Try direct build as fallback
+    const translationsDir = path.join(process.cwd(), 'packages/twenty-shared/translations');
+    process.chdir(translationsDir);
+    execSync('npx tsc --outDir dist && cp dist/index.js dist/twenty-shared-translations.esm.js && cp dist/index.js dist/twenty-shared-translations.cjs.js', { stdio: 'inherit' });
+    process.chdir(process.cwd());
+    console.log('✅ Direct build succeeded');
+  }
 } catch (error) {
   console.warn(`⚠️ Normal build failed: ${error.message}`);
   console.log('Creating files manually...');
@@ -104,7 +116,7 @@ export const SOURCE_LOCALE = 'en';
   fs.writeFileSync(path.join(distDir, 'index.js'), translationsContent);
   fs.writeFileSync(path.join(distDir, 'twenty-shared-translations.esm.js'), translationsContent);
   fs.writeFileSync(path.join(distDir, 'twenty-shared-translations.cjs.js'), cjsContent);
-  
+
   // Create a simple type definition file
   fs.writeFileSync(path.join(distDir, 'index.d.ts'), `export declare const APP_LOCALES: {
   readonly en: "en";

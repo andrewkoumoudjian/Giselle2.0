@@ -1,11 +1,19 @@
-# Vercel Deployment Guide
+# Vercel Deployment Guide for Giselle 2.5
 
-This guide provides instructions for deploying this project to Vercel.
+This guide provides instructions for deploying the Giselle 2.5 Nx monorepo to Vercel.
 
 ## Prerequisites
 
 - A Vercel account
 - Git repository with this codebase
+- Node.js 20.x (as specified in `.nvmrc`)
+
+## Key Files for Vercel Deployment
+
+1. **vercel.json**: Configures the Vercel deployment with proper functions and rewrites
+2. **vercel-setup.js**: Sets up the Vercel deployment environment, including downgrading Yarn
+3. **fix-nx-plugins.js**: Installs required Nx plugins at the correct version
+4. **ensure-translations-build.js**: Guarantees the shared translations package builds correctly
 
 ## Deployment Steps
 
@@ -21,6 +29,8 @@ This guide provides instructions for deploying this project to Vercel.
    - Configure the project settings:
      - Framework Preset: Other
      - Root Directory: ./
+     - Build Command: `yarn build:all`
+     - Output Directory: Leave empty (configured in vercel.json)
 
 3. **Environment Variables**
 
@@ -28,6 +38,8 @@ This guide provides instructions for deploying this project to Vercel.
 
    ```
    NODE_VERSION=20.x
+   NX_VERCEL_REMOTE_CACHE_TOKEN=your_vercel_token
+   NX_VERCEL_REMOTE_CACHE_TEAM=your_team_id (if applicable)
    ```
 
 4. **Deploy**

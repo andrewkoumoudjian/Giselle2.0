@@ -405,7 +405,7 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "debug-registry": "npm config get registry && npm view drizzle-orm version",
-    "vercel-build": "node downgrade-yarn.js && yarn install && yarn fix-nx-plugins && node ensure-translations-build.js && node vercel-build-script.js",
+    "vercel-build": "node vercel-setup.js && yarn install && yarn fix-nx-plugins && node ensure-translations-build.js && node vercel-build-script.js",
     "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
     "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
     "build:ui": "nx build twenty-ui --runner=@vercel/remote-nx",
@@ -413,7 +413,7 @@
     "build:server": "nx build twenty-server --runner=@vercel/remote-nx",
     "build:emails": "nx build twenty-emails --runner=@vercel/remote-nx",
     "build:utils": "tsc -b packages/twenty-utils",
-    "build:all": "nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers && yarn copy-frontend",
+    "build:all": "node vercel-setup.js && yarn fix-nx-plugins && node ensure-translations-build.js && nx run-many -t build --all --runner=@vercel/remote-nx && yarn copy-api-handlers && yarn copy-frontend",
     "copy-api-handlers": "mkdir -p api && cp -f dist/packages/twenty-server/api/*.js api/ || true",
     "copy-frontend": "mkdir -p public && cp -R dist/packages/twenty-front/* public/ || true",
     "generate:barrels": "node scripts/generate-barrels.js",

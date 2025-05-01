@@ -1,23 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "builds": [
-    {
-      "src": "packages/twenty-front/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/packages/twenty-front"
-      }
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node",
-      "config": {
-        "memory": 1024,
-        "maxDuration": 10
-      }
+  "buildCommand": "yarn build:all",
+  "outputDirectory": "public",
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
     }
-  ],
+  },
   "rewrites": [
     {
       "source": "/api/:path*",
@@ -31,16 +22,5 @@
   "cleanUrls": true,
   "regions": [
     "iad1"
-  ],
-  "env": {
-    "NX_BRANCH": "git branch --show-current",
-    "NX_CLI": "nx",
-    "NX_VERBOSITY": "verbose",
-    "NX_REMOTE_CACHE": "true",
-    "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
-    "YARN_ENABLE_GLOBAL_CACHE": "false",
-    "YARN_NODE_LINKER": "node-modules",
-    "FORCE_COLOR": "3",
-    "NX_CACHE_DIRECTORY": "/tmp/nx-cache"
-  }
+  ]
 }
