@@ -27,6 +27,60 @@ function runCommand(command, options = {}) {
   }
 }
 
+// Check for and fix Yarn issues
+console.log('\n🧐 Checking Yarn configuration...');
+try {
+  // Check Yarn version
+  const yarnVersion = execSync('yarn --version', { encoding: 'utf8' }).trim();
+  console.log(`Detected Yarn version: ${yarnVersion}`);
+  
+  // If packages are missing from lockfile, try rebuilding it
+  if (yarnVersion.startsWith('4.')) {
+    console.log('Running yarn install to ensure lockfile is up to date...');
+    try {
+      // First, fix any resolutions
+      const packageJsonPath = path.join(process.cwd(), 'package.json');
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+      // Copy NX versions from devDependencies to resolutions if not already present
+      const nxPackages = [
+        'nx', '@nx/js', '@nx/eslint', '@nx/eslint-plugin', '@nx/jest', 
+        '@nx/node', '@nx/react', '@nx/vite', '@nx/web', '@nx/storybook'
+      ];
+      
+      if (packageJson.devDependencies) {
+        if (!packageJson.resolutions) {
+          packageJson.resolutions = {};
+        }
+        
+        let updated = false;
+        for (const pkg of nxPackages) {
+          if (packageJson.devDependencies[pkg] && !packageJson.resolutions[pkg]) {
+            packageJson.resolutions[pkg] = packageJson.devDependencies[pkg];
+            updated = true;
+          }
+        }
+        
+        if (updated) {
+          console.log('Updating resolutions in package.json to ensure correct versions...');
+          fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+        }
+      }
+      
+      // Run Yarn install to update lockfile
+      runCommand('yarn install');
+      
+      // Run fix-nx-plugins.js to ensure NX plugins are installed
+      runCommand('node fix-nx-plugins.js');
+      
+    } catch (yarnError) {
+      console.warn(`⚠️ Warning: Yarn installation issue: ${yarnError.message}`);
+    }
+  }
+} catch (error) {
+  console.warn(`⚠️ Warning: Yarn version check failed: ${error.message}`);
+}
+
 // Step 1: Ensure shared translations are built correctly
 console.log('\n📦 Building twenty-shared-translations...');
 const translationsDir = path.join(process.cwd(), 'packages/twenty-shared/translations');
@@ -172,7 +226,11 @@ try {
 // Step 4: Build the frontend
 console.log('\n📦 Building twenty-front...');
 try {
-  runCommand('npx nx build twenty-front');
+  // Try different approaches to build
+  if (!runCommand('npx nx build twenty-front')) {
+    console.log('Trying alternative build command...');
+    runCommand('yarn workspace twenty-front build:full');
+  }
 } catch (error) {
   console.error('❌ Error building frontend:', error);
 }

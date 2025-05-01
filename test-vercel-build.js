@@ -77,11 +77,68 @@ try {
     }
     
     console.log(`build:all script: ${packageJson.scripts?.['build:all'] || 'Not found'}`);
+    
+    // Check for NX dependencies in package.json resolutions
+    console.log('\nChecking for NX package resolutions:');
+    if (packageJson.resolutions) {
+      const nxPackages = [
+        'nx', '@nx/js', '@nx/eslint', '@nx/eslint-plugin', '@nx/jest',
+        '@nx/node', '@nx/react', '@nx/vite', '@nx/web'
+      ];
+      
+      let missingResolutions = [];
+      for (const pkg of nxPackages) {
+        if (packageJson.resolutions[pkg]) {
+          console.log(`✅ ${pkg} -> ${packageJson.resolutions[pkg]}`);
+        } else {
+          missingResolutions.push(pkg);
+        }
+      }
+      
+      if (missingResolutions.length > 0) {
+        console.warn(`⚠️ Missing resolutions for: ${missingResolutions.join(', ')}`);
+      }
+    } else {
+      console.warn('⚠️ No resolutions section found in package.json');
+    }
   } else {
     console.error('❌ package.json not found');
   }
 } catch (error) {
   console.error('❌ Error checking package.json:', error.message);
+}
+
+// Check yarn.lock file for NX dependencies
+try {
+  console.log('\nChecking yarn.lock for NX dependencies:');
+  const yarnLockPath = path.join(process.cwd(), 'yarn.lock');
+  
+  if (fs.existsSync(yarnLockPath)) {
+    const yarnLockContent = fs.readFileSync(yarnLockPath, 'utf8');
+    console.log(`Found yarn.lock (${(yarnLockContent.length / 1024).toFixed(2)} KB)`);
+    
+    const nxPackages = [
+      '@nx/js', '@nx/eslint', '@nx/jest', '@nx/node', '@nx/react', '@nx/vite', '@nx/web'
+    ];
+    
+    let missingPackages = [];
+    for (const pkg of nxPackages) {
+      if (yarnLockContent.includes(`"${pkg}@`)) {
+        console.log(`✅ ${pkg} found in yarn.lock`);
+      } else {
+        missingPackages.push(pkg);
+      }
+    }
+    
+    if (missingPackages.length > 0) {
+      console.error(`❌ Missing packages in yarn.lock: ${missingPackages.join(', ')}`);
+      console.log('You may need to run: node fix-nx-plugins.js && yarn install');
+    }
+  } else {
+    console.error('❌ yarn.lock not found');
+  }
+} catch (error) {
+  console.error('❌ Error checking yarn.lock:', error.message);
 }
 
 // Overall summary
@@ -91,6 +148,7 @@ console.log('1. .yarn/releases/yarn-4.4.0.cjs is present and ~2.5MB in size');
 console.log('2. .yarnrc.yml points to .yarn/releases/yarn-4.4.0.cjs');
 console.log('3. package.json has "packageManager": "yarn@4.4.0"');
 console.log('4. The build:all script doesn\'t try to run setup-yarn-3.6.4.js');
+console.log('5. All NX packages are in resolutions and in yarn.lock');
 
 console.log('\n🚀 To test the build locally, run:');
 console.log('yarn build:all'); 
