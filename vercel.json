@@ -1,7 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "node vercel-prepare-yarn.js && yarn build:all",
+  "installCommand": "node vercel-prebuild.js",
+  "buildCommand": "yarn build:all || yarn build:safe",
   "outputDirectory": "public",
   "functions": {
     "api/**/*.js": {

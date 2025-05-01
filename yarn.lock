@@ -56784,3 +56784,98 @@ __metadata:
   checksum: 10c0/3c7830cdd3378667e058ffdb4cf2bb78ac5711214e2725900873accb23f3dfe5f9e7e5a06dcdc5f29605da976fc45c26d9a13ca334d6eea2245a15e77b8fc06e
   languageName: node
   linkType: hard
+
+"@nx/js@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/js@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/eslint@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/eslint@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/eslint-plugin@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/eslint-plugin@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/jest@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/jest@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/node@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/node@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/react@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/react@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/vite@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/vite@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/web@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/web@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"@nx/storybook@npm:22.10.2":
+  version: 22.10.2
+  resolution: "@nx/storybook@npm:22.10.2"
+  dependencies:
+    nx: 22.10.2
+  languageName: node
+  linkType: hard
+
+"nx@npm:22.10.2":
+  version: 22.10.2
+  resolution: "nx@npm:22.10.2"
+  bin:
+    nx: bin/nx.js
+  dependencies:
+    "@nrwl/cli": 22.10.2
+    "@nrwl/tao": 22.10.2
+    "@parcel/watcher": "^2.0.0"
+    chalk: "^4.1.0"
+    cli-cursor: "3.1.0"
+    commander: "^9.0.0"
+    fast-glob: "3.2.7"
+    inquirer: "^8.2.0"
+    js-yaml: "^4.1.0"
+    minimatch: "^3.0.4"
+    node-fetch: "^2.6.7"
+    uuid: "^8.3.2"
+    yargs: "^17.6.2"
+    yargs-parser: "^21.1.1"
+  languageName: node
+  linkType: hard

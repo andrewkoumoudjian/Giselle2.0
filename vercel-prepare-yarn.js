@@ -69,118 +69,69 @@ try {
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
   }
 
-  // Special handling for Yarn 4.4.0 lockfile issues
-  // If we have a yarn.lock, check if we need to modify it directly
-  const yarnLockPath = path.join(process.cwd(), 'yarn.lock');
-  if (fs.existsSync(yarnLockPath)) {
-    console.log('🔍 Checking yarn.lock for NX package references...');
-    
-    // 1. First try the proper way - running yarn install
-    try {
-      console.log('🔄 Running yarn install to update lockfile...');
-      execSync('yarn install', { stdio: 'inherit' });
-    } catch (installError) {
-      console.warn(`⚠️ Yarn install encountered an issue: ${installError.message}`);
-      
-      // 2. If install fails, try reinstalling just the problematic packages
-      for (const pkg of requiredPackages) {
-        try {
-          console.log(`🔄 Reinstalling ${pkg}@${nxVersion}...`);
-          
-          // Try removing first (ignore errors if it doesn't exist)
-          try {
-            execSync(`yarn remove ${pkg}`, { stdio: 'pipe' });
-          } catch (e) {
-            // Ignore remove errors
-          }
-          
-          // Then add it back
-          execSync(`yarn add ${pkg}@${nxVersion} -D`, { stdio: 'inherit' });
-        } catch (pkgError) {
-          console.warn(`⚠️ Failed to reinstall ${pkg}: ${pkgError.message}`);
-        }
-      }
+  // ===== VERCEL DEPLOYMENT SPECIFIC FIXES =====
+  
+  // 1. Disable immutable installs for Yarn 4.4.0 on Vercel
+  console.log('⚙️ Configuring Yarn settings for Vercel...');
+  try {
+    execSync('yarn config set enableImmutableInstalls false', { stdio: 'inherit' });
+    execSync('yarn config set enableGlobalCache false', { stdio: 'inherit' });
+    console.log('✅ Yarn configs set for Vercel environment');
+  } catch (configError) {
+    console.warn(`⚠️ Could not set Yarn configs: ${configError.message}`);
+  }
+  
+  // 2. Directly modify yarn.lock to add missing Nx package entries
+  console.log('🔧 Running direct lockfile fix for Nx packages...');
+  try {
+    // First check if our script exists
+    if (fs.existsSync('./vercel-lockfile-fix.js')) {
+      execSync('node vercel-lockfile-fix.js', { stdio: 'inherit' });
+    } else {
+      console.warn('⚠️ vercel-lockfile-fix.js script not found, skipping direct lockfile fixes');
     }
+  } catch (lockfixError) {
+    console.warn(`⚠️ Error running lockfile fix: ${lockfixError.message}`);
+  }
+  
+  // 3. Run yarn install without immutable flag
+  console.log('🔄 Running yarn install...');
+  try {
+    execSync('yarn install', { stdio: 'inherit' });
+    console.log('✅ Yarn install completed successfully');
+  } catch (installError) {
+    console.error(`❌ Yarn install failed: ${installError.message}`);
     
-    // 3. Check if our install resolved the issues
-    let stillMissingPackages = false;
+    // Fallback: Add the NX packages explicitly
+    console.log('🛟 Attempting fallback installation of NX packages...');
     for (const pkg of requiredPackages) {
       try {
-        execSync(`yarn why ${pkg}`, { stdio: 'pipe' });
-        console.log(`✅ ${pkg} is properly resolved`);
-      } catch (whyError) {
-        console.warn(`⚠️ ${pkg} still has resolution issues, will need manual intervention`);
-        stillMissingPackages = true;
+        // First remove to avoid conflicts
+        execSync(`yarn remove ${pkg}`, { stdio: 'pipe' });
+        // Then add with specific version
+        execSync(`yarn add ${pkg}@${nxVersion} -D`, { stdio: 'inherit' });
+        console.log(`✅ Added ${pkg}@${nxVersion}`);
+      } catch (addError) {
+        console.warn(`⚠️ Could not add ${pkg}: ${addError.message}`);
       }
     }
-    
-    if (stillMissingPackages) {
-      // 4. Create a minimal package.json with just the problematic packages
-      console.log('🛠️ Creating temporary project to generate clean lockfile...');
-      const tempDir = path.join(process.cwd(), 'temp-nx-fix');
-      ensureDirectoryExists(tempDir);
-      
-      const tempPackageJson = {
-        name: "nx-temp",
-        version: "1.0.0",
-        private: true,
-        dependencies: {}
-      };
-      
-      // Add all NX packages
-      for (const pkg of requiredPackages) {
-        tempPackageJson.dependencies[pkg] = nxVersion;
-      }
-      
-      fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(tempPackageJson, null, 2));
-      
-      // Generate a clean lockfile for these packages
-      try {
-        console.log('🔄 Generating clean lockfile for NX packages...');
-        execSync('yarn install', { cwd: tempDir, stdio: 'inherit' });
-        
-        // Merge the clean lockfile with our project's lockfile
-        if (fs.existsSync(path.join(tempDir, 'yarn.lock'))) {
-          console.log('🔄 Merging clean lockfile entries into main project...');
-          const cleanLockfile = fs.readFileSync(path.join(tempDir, 'yarn.lock'), 'utf8');
-          
-          // Extract clean entries
-          const cleanEntries = {};
-          for (const pkg of requiredPackages) {
-            const pkgPattern = new RegExp(`"${pkg.replace('/', '\\/')}@npm:${nxVersion.replace('.', '\\.')}[^"]*"[\\s\\S]*?(?=\\n\\n|$)`, 'g');
-            const matches = cleanLockfile.match(pkgPattern);
-            if (matches) {
-              matches.forEach(match => {
-                const key = match.split('\n')[0].replace(/"/g, '').trim();
-                cleanEntries[key] = match;
-              });
-            }
-          }
-          
-          // Add clean entries to main lockfile
-          if (Object.keys(cleanEntries).length > 0) {
-            let mainLockfile = fs.readFileSync(yarnLockPath, 'utf8');
-            mainLockfile += '\n\n# Added by vercel-prepare-yarn.js\n';
-            
-            for (const entry of Object.values(cleanEntries)) {
-              mainLockfile += `\n${entry}\n`;
-            }
-            
-            fs.writeFileSync(yarnLockPath, mainLockfile);
-            console.log('✅ Updated yarn.lock with clean NX package entries');
-          }
-        }
-      } catch (tempError) {
-        console.error(`❌ Failed to generate clean lockfile: ${tempError.message}`);
-      }
-      
-      // Clean up temp directory
-      try {
-        fs.rmSync(tempDir, { recursive: true, force: true });
-      } catch (rmError) {
-        console.warn(`⚠️ Failed to remove temp directory: ${rmError.message}`);
-      }
+  }
+  
+  // 4. Verify package resolution
+  console.log('🔍 Verifying NX package resolution...');
+  let resolutionErrors = [];
+  for (const pkg of requiredPackages) {
+    try {
+      execSync(`yarn why ${pkg}`, { stdio: 'pipe' });
+      console.log(`✅ ${pkg} is properly resolved`);
+    } catch (whyError) {
+      console.warn(`⚠️ ${pkg} still has resolution issues`);
+      resolutionErrors.push(pkg);
     }
+  }
+  
+  if (resolutionErrors.length > 0) {
+    console.warn(`⚠️ ${resolutionErrors.length} packages still have resolution issues. Build may fail.`);
   }
 
   console.log('✅ Yarn 4.4.0 prepared for Vercel deployment!');
