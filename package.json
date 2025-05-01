@@ -405,7 +405,7 @@
   "scripts": {
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
     "debug-registry": "npm config get registry && npm view drizzle-orm version",
-    "vercel-build": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && npx nx build twenty-front",
+    "vercel-build": "yarn fix-nx-plugins && yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspace twenty-ui build && npx nx build twenty-front",
     "prepare": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build && yarn workspaces foreach -pt run prepare",
     "build:shared": "yarn workspace twenty-shared-translations build && yarn workspace twenty-shared build",
     "build:ui": "nx build twenty-ui --runner=@vercel/remote-nx",
@@ -419,7 +419,8 @@
     "generate:barrels": "node scripts/generate-barrels.js",
     "prebuild": "yarn generate:barrels",
     "dev": "yarn workspace twenty-server start:dev",
-    "preinstall": "node vercel-build-helper.js && yarn cache clean --all && rm -rf \"$(yarn config get globalFolder)/metadata/npm\" && npm config set registry https://registry.npmjs.org/ --location=global"
+    "preinstall": "node vercel-build-helper.js",
+    "fix-nx-plugins": "node fix-nx-plugins.js"
   },
   "preconstruct": {
     "packages": [
