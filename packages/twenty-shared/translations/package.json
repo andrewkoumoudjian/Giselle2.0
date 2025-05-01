@@ -4,7 +4,7 @@
   "module": "dist/twenty-shared-translations.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc --outDir dist && cp dist/index.js dist/twenty-shared-translations.esm.js && cp dist/index.js dist/twenty-shared-translations.cjs.js",
+    "build": "npx tsc --outDir dist && cp dist/index.js dist/twenty-shared-translations.esm.js && cp dist/index.js dist/twenty-shared-translations.cjs.js",
     "prepare": "npm run build"
   },
   "files": [

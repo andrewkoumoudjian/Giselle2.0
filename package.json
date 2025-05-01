@@ -388,7 +388,17 @@
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.17",
     "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0"
+    "@emotion/styled": "^11.11.0",
+    "@nx/eslint-plugin": "22.10.2",
+    "@nx/eslint": "22.10.2",
+    "@nx/jest": "22.10.2",
+    "@nx/js": "22.10.2",
+    "@nx/node": "22.10.2",
+    "@nx/react": "22.10.2",
+    "@nx/storybook": "22.10.2",
+    "@nx/vite": "22.10.2",
+    "@nx/web": "22.10.2",
+    "nx": "22.10.2"
   },
   "version": "0.2.1",
   "nx": {},
@@ -409,7 +419,7 @@
     "generate:barrels": "node scripts/generate-barrels.js",
     "prebuild": "yarn generate:barrels",
     "dev": "yarn workspace twenty-server start:dev",
-    "preinstall": "yarn cache clean --all && rm -rf \"$(yarn config get globalFolder)/metadata/npm\""
+    "preinstall": "node vercel-build-helper.js && yarn cache clean --all && rm -rf \"$(yarn config get globalFolder)/metadata/npm\" && npm config set registry https://registry.npmjs.org/ --location=global"
   },
   "preconstruct": {
     "packages": [

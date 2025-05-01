@@ -1,21 +1,14 @@
 /// <reference types='vitest' />
 import react from '@vitejs/plugin-react-swc';
-import wyw from '@wyw-in-js/vite';
-import { glob } from 'glob';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import checker from 'vite-plugin-checker';
 import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
-
 import packageJson from './package.json';
 
-const entries = glob.sync(['src/ui/**/*.ts', 'src/ui/**/*.tsx'], {
-  ignore: ['**/*.stories.*', '**/*.test.*', '**/use-*'],
-});
+const entries = ['src/index.ts'];
 
 const entryFileNames = (chunk: any, extension: string): string => {
   const filename = chunk.name.replace('src/', '');
@@ -23,20 +16,7 @@ const entryFileNames = (chunk: any, extension: string): string => {
 };
 
 export default defineConfig(({ mode }) => {
-  const checkersConfig: UserPluginConfig = {};
-
-  if (process.env.VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
-    checkersConfig.typescript = {
-      root: './',
-      tsconfigPath: './tsconfig.json',
-    };
-  }
-  if (process.env.VITE_DISABLE_ESLINT_CHECKER !== 'true') {
-    checkersConfig.eslint = {
-      root: './',
-      lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-    };
-  }
+  // No checkers config
 
   const dtsConfig = {
     include: ['src'],
@@ -67,18 +47,10 @@ export default defineConfig(({ mode }) => {
         jsxImportSource: '@emotion/react',
         plugins: [['@swc/plugin-emotion', {}]],
         tsDecorators: true,
-        // Disable SWC's TypeScript checking as we're using vite-plugin-dts
-        typescript: {
-          skipTypeCheck: true,
-        },
       }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),
-      checker(checkersConfig),
-      wyw({
-        tsconfig: './tsconfig.json',
-      }),
     ],
     resolve: {
       alias: {

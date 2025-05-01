@@ -27,7 +27,12 @@
       "NX_BRANCH": "git branch --show-current",
       "NX_CLI": "nx",
       "NX_VERBOSITY": "verbose",
-      "NX_REMOTE_CACHE": "true"
+      "NX_REMOTE_CACHE": "true",
+      "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+      "YARN_ENABLE_GLOBAL_CACHE": "false",
+      "YARN_NODE_LINKER": "node-modules",
+      "FORCE_COLOR": "3",
+      "NX_CACHE_DIRECTORY": "/tmp/nx-cache"
     }
   }
 }
